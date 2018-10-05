@@ -7,7 +7,7 @@ using System.Net;
 
 namespace GPXGen
 {
-    public class GPX
+    public class GXTY
     {
         public class Position
         {
@@ -93,7 +93,7 @@ namespace GPXGen
 
         private List<Position> PositionList;
         
-        public GPX(Position start)
+        public GXTY(Position start)
         {
             PositionList = new List<Position> { start };
         }
@@ -112,6 +112,13 @@ namespace GPXGen
             return str;
         }
 
+        /// <summary>
+        /// 生成数据包
+        /// </summary>
+        /// <param name="sign">校验值，目前不知道计算方法，可以确定和本次跑步数据有关</param>
+        /// <param name="runpgid">本次跑步id，点击开始跑时服务器会发送过来这个值</param>
+        /// <param name="userid">用户id，不会变</param>
+        /// <returns></returns>
         public string ToJson(string sign,string runpgid,string userid)
         {
             string signstr = "sign=" + sign + "&data=";
@@ -172,21 +179,20 @@ namespace GPXGen
         static void Main(string[] args)
         {
             string path = AppDomain.CurrentDomain.BaseDirectory + "gen.gpx";
-            GPX.Position StartP = new GPX.Position(30.866974131222978, 121.91835609691202);
+            GXTY.Position StartP = new GXTY.Position(30.866974131222978, 121.91835609691202);
 
-            GPX gpx = new GPX(StartP);
-
-
+            GXTY gxty = new GXTY(StartP);
+            
             for (int i = 1; i < 10; i++)
             {
-                GPX.Position p = new GPX.Position(StartP.Latitude + i*0.00005f, StartP.Longtitude);
+                GXTY.Position p = new GXTY.Position(StartP.Latitude + i*0.00005f, StartP.Longtitude);
                 p.SetTime(StartP.Time.AddSeconds(i));
-                gpx.AddPosition(p);
+                gxty.AddPosition(p);
             }
 
-            gpx.WriteGPX(path);
+            gxty.WriteGPX(path);
 
-            Console.WriteLine(gpx.ToJson("blablabla", "12345", "12345"));
+            Console.WriteLine(gxty.ToJson("blablabla", "12345", "12345"));
             Console.ReadLine();
 
         }
