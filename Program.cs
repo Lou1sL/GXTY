@@ -4,9 +4,36 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Net;
+using System.Security.Cryptography;
 
 namespace GPXGen
 {
+    public static class GXTYUtils
+    {
+        private const string Salt = "lpKK*TJE8WaIg%93O0pfn0#xS0i3xE$z";
+
+        public static string Sign(string datacontent)
+        {
+            String teststr = "{\"bNode\":[],\"buPin\":\"0.0\",\"duration\":\"117\",\"endTime\":\"2018-10-05 07:30:15\",\"frombp\":\"0\",\"goal\":\"2.00\",\"real\":\"500.65475\",\"runPageId\":\"6702563\",\"speed\":\"03\\u002751\\u0027\\u0027\",\"startTime\":\"2018-10-05 07:28:03\",\"tNode\":[],\"totalNum\":\"0\",\"track\":[{\"latitude\":30.89071967230903,\"longitude\":121.92207980685764},{\"latitude\":30.89121826171875,\"longitude\":121.92207980685764},{\"latitude\":30.891318359375,\"longitude\":121.92207980685764},{\"latitude\":30.8915185546875,\"longitude\":121.92207980685764},{\"latitude\":30.89161865234375,\"longitude\":121.92207980685764},{\"latitude\":30.891820203993056,\"longitude\":121.922080078125},{\"latitude\":30.892519259982638,\"longitude\":121.922080078125},{\"latitude\":30.89271918402778,\"longitude\":121.922080078125},{\"latitude\":30.892819552951387,\"longitude\":121.922080078125},{\"latitude\":30.89301947699653,\"longitude\":121.922080078125},{\"latitude\":30.89311957465278,\"longitude\":121.922080078125},{\"latitude\":30.893321397569444,\"longitude\":121.922080078125},{\"latitude\":30.894019911024305,\"longitude\":121.922080078125},{\"latitude\":30.894220377604167,\"longitude\":121.922080078125},{\"latitude\":30.894320203993054,\"longitude\":121.922080078125},{\"latitude\":30.894520399305556,\"longitude\":121.922080078125},{\"latitude\":30.894620225694446,\"longitude\":121.922080078125},{\"latitude\":30.89482231987847,\"longitude\":121.922080078125},{\"latitude\":30.894922146267362,\"longitude\":121.922080078125},{\"latitude\":30.8951220703125,\"longitude\":121.92208034939236},{\"latitude\":30.89522243923611,\"longitude\":121.92208034939236},{\"latitude\":30.89542236328125,\"longitude\":121.92208034939236},{\"latitude\":30.895520833333332,\"longitude\":121.92208034939236},{\"latitude\":30.895721028645834,\"longitude\":121.92208034939236},{\"latitude\":30.895821126302085,\"longitude\":121.92208034939236},{\"latitude\":30.896021050347223,\"longitude\":121.92208034939236},{\"latitude\":30.896121419270834,\"longitude\":121.92208034939236},{\"latitude\":30.89632297092014,\"longitude\":121.92208034939236},{\"latitude\":30.89642306857639,\"longitude\":121.92208034939236}],\"trend\":[{\"x\":0.1,\"y\":51.7},{\"x\":0.2,\"y\":51.95},{\"x\":0.3,\"y\":51.916668},{\"x\":0.4,\"y\":52.6},{\"x\":0.5,\"y\":54.333332}],\"type\":\"2\",\"userid\":\"133652\"}";
+            return Str2MD5(Salt + "data" + datacontent);
+        }
+
+        private static string Str2MD5(string ClearText)
+        {
+
+            byte[] ByteData = Encoding.ASCII.GetBytes(ClearText);
+            MD5 oMd5 = MD5.Create();
+            byte[] HashData = oMd5.ComputeHash(ByteData);
+            StringBuilder oSb = new StringBuilder();
+
+            for (int x = 0; x < HashData.Length; x++)
+            {
+                oSb.Append(HashData[x].ToString("x2"));
+            }
+            return oSb.ToString();
+        }
+    }
+
     public class GXTY
     {
         public class Position
@@ -115,13 +142,12 @@ namespace GPXGen
         /// <summary>
         /// 生成数据包
         /// </summary>
-        /// <param name="sign">校验值，目前不知道计算方法，可以确定和本次跑步数据有关</param>
         /// <param name="runpgid">本次跑步id，点击开始跑时服务器会发送过来这个值</param>
         /// <param name="userid">用户id，不会变</param>
         /// <returns></returns>
-        public string ToJson(string sign,string runpgid,string userid)
+        public string ToJson(string runpgid,string userid)
         {
-            string signstr = "sign=" + sign + "&data=";
+            
             string StartT = PositionList.First().Time.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss");
             string EndT = PositionList.Last().Time.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss");
             double Duration = (PositionList.Last().Time - PositionList.First().Time).TotalSeconds;
@@ -160,6 +186,9 @@ namespace GPXGen
             str += "\"type\":\"2\",";
             str += "\"userid\":\""+userid+"\"";
             str += "}";
+
+            //Console.WriteLine(str);
+            string signstr = "sign=" + GXTYUtils.Sign(str) + "&data=";
             return signstr + WebUtility.UrlEncode(str);
         }
 
@@ -179,20 +208,20 @@ namespace GPXGen
         static void Main(string[] args)
         {
             string path = AppDomain.CurrentDomain.BaseDirectory + "gen.gpx";
-            GXTY.Position StartP = new GXTY.Position(30.866974131222978, 121.91835609691202);
+            GXTY.Position StartP = new GXTY.Position(30.8669741312, 121.9183560969);
 
             GXTY gxty = new GXTY(StartP);
             
-            for (int i = 1; i < 10; i++)
+            for (int i = 1; i < 100; i++)
             {
-                GXTY.Position p = new GXTY.Position(StartP.Latitude + i*0.00005f, StartP.Longtitude);
+                GXTY.Position p = new GXTY.Position(StartP.Latitude + i*0.05f, StartP.Longtitude);
                 p.SetTime(StartP.Time.AddSeconds(i));
                 gxty.AddPosition(p);
             }
 
             gxty.WriteGPX(path);
 
-            Console.WriteLine(gxty.ToJson("blablabla", "12345", "12345"));
+            Console.WriteLine(gxty.ToJson("6713275", "133652"));
             Console.ReadLine();
 
         }
