@@ -214,14 +214,14 @@ namespace GPXGen
             
             for (int i = 1; i < 100; i++)
             {
-                GXTY.Position p = new GXTY.Position(StartP.Latitude + i*0.05f, StartP.Longtitude);
+                GXTY.Position p = new GXTY.Position(StartP.Latitude + i*6f, StartP.Longtitude);
                 p.SetTime(StartP.Time.AddSeconds(i));
                 gxty.AddPosition(p);
             }
 
             gxty.WriteGPX(path);
-
-            Console.WriteLine(gxty.ToJson("6713275", "133652"));
+            //记得改这俩值哦:)
+            Console.WriteLine(gxty.ToJson("6723829", "133652"));
             Console.ReadLine();
 
         }
