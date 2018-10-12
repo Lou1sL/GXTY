@@ -8,13 +8,15 @@ using System.Security.Cryptography;
 
 namespace GPXGen
 {
-    public static class JsonSign
+    public static class Json2Package
     {
         private const string Salt = "lpKK*TJE8WaIg%93O0pfn0#xS0i3xE$z";
 
-        public static string Sign(string datacontent)
+        public static string Create(string json)
         {
-            return Str2MD5(Salt + "data" + datacontent);
+            string sign = Str2MD5(Salt + "data" + json);
+            string data = WebUtility.UrlEncode(json);
+            return "sign="+sign+"&data="+ data;
         }
 
         private static string Str2MD5(string str)
@@ -151,7 +153,7 @@ namespace GPXGen
         /// <param name="runpgid">本次跑步id，点击开始跑时服务器会发送过来这个值</param>
         /// <param name="userid">用户id，不会变</param>
         /// <returns></returns>
-        public string ToJson(string runpgid,string userid)
+        public string ToPackage(string runpgid,string userid)
         {
             
             string StartT = PositionList.First().Time.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss");
@@ -194,8 +196,7 @@ namespace GPXGen
             str += "}";
 
             //Console.WriteLine(str);
-            string signstr = "sign=" + JsonSign.Sign(str) + "&data=";
-            return signstr + WebUtility.UrlEncode(str);
+            return Json2Package.Create(str);
         }
 
         public void WriteGPX(string path)
@@ -213,6 +214,7 @@ namespace GPXGen
     {
         static void Main(string[] args)
         {
+            /**
             string path = AppDomain.CurrentDomain.BaseDirectory + "gen.gpx";
             GXTY.Position StartP = new GXTY.Position(30.8669741312, 121.9183560969);
             GXTY.Position GPXDelta = new GXTY.Position(0.00005f, 0f);
@@ -228,6 +230,13 @@ namespace GPXGen
             //记得改这俩值哦:)
             Console.WriteLine(gxty.ToJson("6723829", "133652"));
             Console.ReadLine();
+            **/
+
+            Console.Write("请输入账号:");
+            string username = Console.ReadLine();
+            Console.Write("请输入密码:");
+            string password = Console.ReadLine();
+
 
         }
     }
