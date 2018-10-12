@@ -143,7 +143,6 @@ namespace GXTY_CSharp
             str += "\"endTime\":\"" + EndT + "\",";
             str += "\"frombp\":\"0\",";
             str += "\"goal\":\"2.00\",";
-            //TODO:rly?
             str += "\"real\":\"" + Distance + "\",";
             str += "\"runPageId\":\"" + runpgid + "\",";
             str += "\"speed\":\"" + Speed.Hours.ToString("00") + "\\u0027" + Speed.Minutes.ToString("00") + "\\u0027\\u0027\",";
@@ -164,11 +163,10 @@ namespace GXTY_CSharp
             //TODO:Trend??
             str += "],";
 
-            str += "\"type\":\"2\",";
+            str += "\"type\":\"1\",";
             str += "\"userid\":\"" + userid + "\"";
             str += "}";
 
-            //Console.WriteLine(str);
             return str;
         }
 

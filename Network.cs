@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace GXTY_CSharp
 {
@@ -15,7 +17,12 @@ namespace GXTY_CSharp
         private const string API_RUN = "run/runPage";
         private const string API_SAVERUN = "run/saveRunV2";
 
-
+        private static string uuid = "B5ED79A287A41BF46CA1FFFA4DAB3480";
+        private static string utoken = string.Empty;
+        private static string userid = string.Empty;
+        private static string runpgid = string.Empty;
+        private static string bNodeArray = string.Empty;
+        private static string tNodeArray = string.Empty;
 
         private static class Json2Package
         {
@@ -26,10 +33,6 @@ namespace GXTY_CSharp
                 string sign = Str2MD5(Salt + "data" + json);
                 string data = WebUtility.UrlEncode(json);
                 return "sign=" + sign + "&data=" + data;
-            }
-            public static string Reverse(string package)
-            {
-                return WebUtility.UrlDecode(package);
             }
             private static string Str2MD5(string str)
             {
@@ -51,49 +54,62 @@ namespace GXTY_CSharp
         {
             return "{\"info\":\"" + uuid + "\",\"mobile\":\"" + mobile + "\",\"password\":\"" + pass + "\",\"type\":\"AndroidSDKbuiltforx86\"}";
         }
-        private static string ExecRunJSON(string userid)
+        private static string ExecRunJSON()
         {
             return "{\"initLocation\":\"\",\"type\":\"1\",\"userid\":\"" + userid + "\"}";
         }
-        private static string FreeRunJSON(string userid)
+        private static string FreeRunJSON()
         {
             return "{\"initLocation\":\"\",\"type\":\"2\",\"userid\":\""+userid+"\"}";
         }
-        private static string SaveRunJSON(string json)
+
+        public static void Login(string mobile, string pass)
         {
-            return json;
+            JObject jo = Request(API_ROOT + API_LOGIN, Json2Package.Create(LoginJSON(mobile, pass)));
+            userid = jo["data"]["userid"].ToString();
+            utoken = jo["data"]["utoken"].ToString();
+        }
+        public static void ExecRun()
+        {
+            JObject jo = Request(API_ROOT + API_RUN, Json2Package.Create(ExecRunJSON()));
+            runpgid = jo["data"]["runPageId"].ToString();
+            bNodeArray = jo["data"]["ibeacon"].ToString();
+            tNodeArray = jo["data"]["gpsinfo"].ToString();
+        }
+        public static void FreeRun()
+        {
+            JObject jo = Request(API_ROOT + API_RUN, Json2Package.Create(FreeRunJSON()));
+            runpgid = jo["data"]["runPageId"].ToString();
+        }
+        public static void SaveExecRun(RunJSON runjson)
+        {
+            string json = runjson.ToJSON(runpgid, userid);
+            JObject jo = (JObject)JsonConvert.DeserializeObject(json);
+            jo["bNode"] = bNodeArray;
+            jo["tNode"] = tNodeArray;
+            jo["type"] = "2";
+            Console.WriteLine(jo.ToString());
+            string pkg = Json2Package.Create(jo.ToString());
+            Request(API_ROOT + API_SAVERUN, "", pkg);
+        }
+        public static void SaveFreeRun(RunJSON runjson)
+        {
+            Request(API_ROOT + API_SAVERUN, "", Json2Package.Create(runjson.ToJSON(runpgid, userid)));
         }
 
-        private static string uuid = "B5ED79A287A41BF46CA1FFFA4DAB3480";
-        private static string utoken = string.Empty;
         private static CookieContainer cookie = new CookieContainer();
-        private static string GetRequest(string url, string get)
+        private static JObject Request(string url, string get, string post = "")
         {
-            var request = (HttpWebRequest)WebRequest.Create(url+"?"+get);
-            request.CookieContainer = cookie;
+            var request = (HttpWebRequest)WebRequest.Create(url + (get == "" ? "" : "?" + get));
 
-            request.UserAgent = "okhttp-okgo/jeasonlzy";
-            request.Headers.Add("versionCode: 296");
-            request.Headers.Add("versionName: 2.2.0");
-            request.Headers.Add("platform: android");
-            request.Headers.Add("xxversionxx: 20180601");
-            request.Headers.Add("uuid: " + uuid);
-            request.Headers.Add("utoken: "+utoken);
-            request.Headers.Add("BDA9F42E0C8A294ECDF5CC72AAE6A701: 0,0,0,0,1");
-
-            var response = (HttpWebResponse)request.GetResponse();
-            //response.Cookies = cookie.GetCookies(request.RequestUri);
-            return new StreamReader(response.GetResponseStream()).ReadToEnd();
-        }
-        private static string PostRequest(string url,string post)
-        {
-            var request = (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-            request.Timeout = 5000;
-            request.AllowAutoRedirect = false;
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.KeepAlive = true;
-            request.CookieContainer = cookie;
+            if (post != "")
+            {
+                request.Method = "POST";
+                request.Timeout = 5000;
+                request.AllowAutoRedirect = false;
+                request.ContentType = "application/x-www-form-urlencoded";
+                request.KeepAlive = true;
+            }
 
             request.UserAgent = "okhttp-okgo/jeasonlzy";
             request.Headers.Add("versionCode: 296");
@@ -103,39 +119,29 @@ namespace GXTY_CSharp
             request.Headers.Add("uuid: " + uuid);
             request.Headers.Add("utoken: " + utoken);
             request.Headers.Add("BDA9F42E0C8A294ECDF5CC72AAE6A701: 0,0,0,0,1");
+            request.CookieContainer = cookie;
 
-            byte[] postBytes = Encoding.UTF8.GetBytes(post);
-            request.ContentLength = postBytes.Length;
-            Stream postDataStream = request.GetRequestStream();
-            postDataStream.Write(postBytes, 0, postBytes.Length);
-            postDataStream.Close();
-
-
+            if (post != "")
+            {
+                byte[] postBytes = Encoding.UTF8.GetBytes(post);
+                request.ContentLength = postBytes.Length;
+                Stream postDataStream = request.GetRequestStream();
+                postDataStream.Write(postBytes, 0, postBytes.Length);
+                postDataStream.Close();
+            }
+            
             var response = (HttpWebResponse)request.GetResponse();
             //response.Cookies = cookie.GetCookies(request.RequestUri);
-
-            return new StreamReader(response.GetResponseStream()).ReadToEnd();
-        }
-
-        public static string Login(string mobile, string pass)
-        {
-            return Json2Package.Reverse(GetRequest(API_ROOT + API_LOGIN, Json2Package.Create(LoginJSON(mobile, pass))));
-        }
-        public static void SetUtoken(string utoken)
-        {
-            Network.utoken = utoken;
-        }
-        public static string ExecRun(string uid)
-        {
-            return Json2Package.Reverse(GetRequest(API_ROOT + API_RUN, Json2Package.Create(ExecRunJSON(uid))));
-        }
-        public static string FreeRun(string uid)
-        {
-            return Json2Package.Reverse(GetRequest(API_ROOT + API_RUN, Json2Package.Create(FreeRunJSON(uid))));
-        }
-        public static string SaveRun(string runjson)
-        {
-            return Json2Package.Reverse(PostRequest(API_ROOT + API_SAVERUN, Json2Package.Create(SaveRunJSON(runjson))));
+            string str = new StreamReader(response.GetResponseStream()).ReadToEnd();
+            JObject jo = (JObject)JsonConvert.DeserializeObject(str);
+            if (jo["code"].ToString() != "200")
+            {
+                Console.WriteLine("步骤执行失败!以下是服务器的返回值:");
+                Console.WriteLine(str);
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
+            return jo;
         }
     }
 }
