@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GPXGen", "GPXGen.csproj", "{C897E23F-A5B4-4DCA-9A8A-D75E57BF6C4A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GXTY_CSharp", "GXTY_CSharp.csproj", "{734D50FC-15E4-4770-82D4-897D36A4E4F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C897E23F-A5B4-4DCA-9A8A-D75E57BF6C4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C897E23F-A5B4-4DCA-9A8A-D75E57BF6C4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C897E23F-A5B4-4DCA-9A8A-D75E57BF6C4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C897E23F-A5B4-4DCA-9A8A-D75E57BF6C4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{734D50FC-15E4-4770-82D4-897D36A4E4F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{734D50FC-15E4-4770-82D4-897D36A4E4F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{734D50FC-15E4-4770-82D4-897D36A4E4F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{734D50FC-15E4-4770-82D4-897D36A4E4F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {897B082A-DB75-4DDD-89EA-D9A6347CD734}
+		SolutionGuid = {FAE037E5-89AC-420F-9B42-289012A45AAD}
 	EndGlobalSection
 EndGlobal

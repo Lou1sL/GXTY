@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C897E23F-A5B4-4DCA-9A8A-D75E57BF6C4A}</ProjectGuid>
+    <ProjectGuid>{734D50FC-15E4-4770-82D4-897D36A4E4F7}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>GPXGen</RootNamespace>
-    <AssemblyName>GPXGen</AssemblyName>
+    <RootNamespace>GXTY_CSharp</RootNamespace>
+    <AssemblyName>GXTY_CSharp</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -42,8 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Network.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RunJSON.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
