@@ -9,7 +9,49 @@ namespace GXTY_CSharp
     {
         static void Main(string[] args)
         {
-
+            Console.WriteLine(@"                                                                          ");
+            Console.WriteLine(@"                                    ]/O[[[[[[[@\`                         ");
+            Console.WriteLine(@"                               ,/[              *\@@@\]                   ");
+            Console.WriteLine(@"                            ]/                     * **,\O`               ");
+            Console.WriteLine(@"                          /`    ]  *]/                  **\@`             ");
+            Console.WriteLine(@"                        =`   ,/  =[`   ]^  ,`**      *  ***,O\            ");
+            Console.WriteLine(@"                       /    /  ,`/  ,/    / *  *,*** ******`=O@`          ");
+            Console.WriteLine(@"                     ,/   ,^  O/` ,/    ,`    ,\@ =**,******OOO@          ");
+            Console.WriteLine(@"                     / ,*O` /OO**OO*,]/O^^* *,O`/ =  *^*=*=OoOOO@         ");
+            Console.WriteLine(@"                    / =,O^*/OOOOO\]]]oO@`*`*,O^ O*/`  O*=\/OOOOOO^        ");
+            Console.WriteLine(@"                   =^=`O^*OO@@/[[`     [OOOOO^ =OOOO**OooOoOOoOOO@        ");
+            Console.WriteLine(@"                   @ ^o/*/oO^\/@@@@@@/         \\/OoOOOOOOO\OooOO@        ");
+            Console.WriteLine(@"                  =^=oO*=OO^         [^           ,\OO@OO^   OoOO@        ");
+            Console.WriteLine(@"                  O /o^*Oo@                   ,]]],\  \@O@OOOOO@O@        ");
+            Console.WriteLine(@"                 ,^ OO`=OOO             ^        [@@\  =@OOO@OO@OO        ");
+            Console.WriteLine(@"               ,O\^=OO*=O@^                        ,@O =@OOO@OO@O^        ");
+            Console.WriteLine(@"      ,/Ooo[[`,/OO^=o@`=oOO         ,]                 @@OoOOOOOO`        ");
+            Console.WriteLine(@"        ,\\]]OO@@@O=O@^=O@/       /@@@\]  ^           /@OooOOO@OO         ");
+            Console.WriteLine(@"               /`o@=O@^/OOO^     /@@@@@@@@@          /\OO^OOOO@O^         ");
+            Console.WriteLine(@"   =\`     ]O[**oO@OO@@/O@O@\[^  OOOOOOO@@@        ,@O@OOo@OO@O@          ");
+            Console.WriteLine(@"    O\***     /OOO@@O@OOOOOO^,^ /*OOOOOOO/^       =O/@OO/@OOO@O@          ");
+            Console.WriteLine(@"     ,\/[[OOOOOO/ /o@OOOOOO^ OO/ =` [@/@[^^    ,/@O@@O/\@OO=@OOO^         ");
+            Console.WriteLine(@"           [`    /`OO@O/@O^ =O/ /@`/ ,@`,^\]@@OOOOO@@\o@O@oO@OOOO`        ");
+            Console.WriteLine(@"               ,/]OO@@@\/^ =@^ //=` /@@O**=@@@@@@@@/\OO@@oO@@@OOOOO]    ] ");
+            Console.WriteLine(@"         ,,,]OO[oO@O@@@@@@@@@@@@/  //`,^**/@@@@@///@OO@@\O@OO ,[OOOOO/[   ");
+            Console.WriteLine(@"             [`  /@@@@@@@@@@@@@@@/\` /***/@@@Oo/@@O@@@O=@OO@OO            ");
+            Console.WriteLine(@"                /@@@@@@@@@@@@@@@@@,O*]]//OoO@@@@@@@@oO@@OO@OO@O@]    ` ,` ");
+            Console.WriteLine(@"              ,@@@@@@@@@@@@@@@@@@@@@@@@\ *[o@@@@@@@@@@@@^[\oOOOO@OO@OO/`  ");
+            Console.WriteLine(@"       ,@@@@@@@@@@@@@@@@@@@@@@@@@@O@^=@@` ,oo@O@@@@@@@@@     [[[          ");
+            Console.WriteLine(@"      /@@@@@@@@@@@@@@@@@@@@@@@@@@OO@@@@O\]@@@@@@@@@@@@@ooO`               ");
+            Console.WriteLine(@"     @@@@@@@@OoOO@@@@@@@@@@@@@@O@@@@o@@OO@\OO@@@@@@@@OOoooO@@\`           ");
+            Console.WriteLine(@"    /@@@@@@@@@@@@@OO@@@@@@@@@@@@@@@@O@O@@@@@@@@@@@@@@\\oooo@@@@@\         ");
+            Console.WriteLine(@"   =@@@@@@@@@@@OO@@@@O@@@@@Oo  ,@O@@@@@@OOOOO@@@@@@@@@/Oooo@@@@@@^        ");
+            Console.WriteLine(@"   @@@@@@@@@@@@@@@OO@@@O@@@/  =/O@@@@@@OO,Oo@@@@@@@@@@^\oooO@@@@@O        ");
+            Console.WriteLine(@"  /@@@@@@@@@@@@@@@@@O@@@@@o  ,OO/@@/\@OOO^ =@@@@@@@@@@@=oooo@@@@@@        ");
+            Console.WriteLine(@" @@@@@@@@@@@@@@@@@@@@@@@@@O  Oo/ @@@@@O@\O =@@@@@@@@@@@oOooo@@@@@@        ");
+            Console.WriteLine(@" @@@@@@@@@@@@@@@@@@@@@@@@@O O]@ ,@@@@@O=o@^@@@@@@@@@@@@OOooo@@@@@@        ");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("--------------------高校体育APP 一键自动体育锻炼工具-----------------------");
+            Console.WriteLine("---------------------------------制作:留白---------------------------------");
+            Console.WriteLine("-------------------------https://github.com/RyuBAI-------------------------");
+            Console.WriteLine("---------------------------------------------------------------------------");
             Console.Write("手机号:");
             string mobile = Console.ReadLine();
             Console.Write("密码:");
