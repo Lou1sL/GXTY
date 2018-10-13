@@ -126,9 +126,9 @@ namespace GXTY_CSharp
         /// <param name="runpgid">本次跑步id，点击开始跑时服务器会发送过来这个值</param>
         /// <param name="userid">用户id，不会变</param>
         /// <returns></returns>
-        public string ToJSON(string runpgid, string userid)
+        public string ToJSON(string runpgid, string userid,string bNode = "",string tNode="")
         {
-
+            string RunType = (bNode == "" && tNode == "") ? "1" : "2";
             string StartT = PositionList.First().Time.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss");
             string EndT = PositionList.Last().Time.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss");
             double Duration = (PositionList.Last().Time - PositionList.First().Time).TotalSeconds;
@@ -137,7 +137,8 @@ namespace GXTY_CSharp
 
             string str = string.Empty;
             str += "{";
-            str += "\"bNode\":[],";
+            if(bNode == "")str += "\"bNode\":[],";
+            else str += "\"bNode\":" + bNode + ",";
             str += "\"buPin\":\"0.0\",";
             str += "\"duration\":\"" + (int)Duration + "\",";
             str += "\"endTime\":\"" + EndT + "\",";
@@ -147,7 +148,8 @@ namespace GXTY_CSharp
             str += "\"runPageId\":\"" + runpgid + "\",";
             str += "\"speed\":\"" + Speed.Hours.ToString("00") + "\\u0027" + Speed.Minutes.ToString("00") + "\\u0027\\u0027\",";
             str += "\"startTime\":\"" + StartT + "\",";
-            str += "\"tNode\":[],";
+            if (tNode == "") str += "\"tNode\":[],";
+            else str += "\"tNode\":" + tNode + ",";
             str += "\"totalNum\":\"0\",";
 
             str += "\"track\":[";
@@ -163,7 +165,7 @@ namespace GXTY_CSharp
             //TODO:Trend??
             str += "],";
 
-            str += "\"type\":\"1\",";
+            str += "\"type\":\""+RunType+"\",";
             str += "\"userid\":\"" + userid + "\"";
             str += "}";
 

@@ -30,8 +30,9 @@ namespace GXTY_CSharp
 
             public static string Create(string json)
             {
-                string sign = Str2MD5(Salt + "data" + json);
-                string data = WebUtility.UrlEncode(json);
+                string jsonfixed = json.Replace("\r","").Replace("\n", "").Replace("\\r", "").Replace("\\n", "");
+                string sign = Str2MD5(Salt + "data" + jsonfixed);
+                string data = WebUtility.UrlEncode(jsonfixed);
                 return "sign=" + sign + "&data=" + data;
             }
             private static string Str2MD5(string str)
@@ -65,40 +66,35 @@ namespace GXTY_CSharp
 
         public static void Login(string mobile, string pass)
         {
-            JObject jo = Request(API_ROOT + API_LOGIN, Json2Package.Create(LoginJSON(mobile, pass)));
+            JObject jo = Request<JObject>(API_ROOT + API_LOGIN, Json2Package.Create(LoginJSON(mobile, pass)));
             userid = jo["data"]["userid"].ToString();
             utoken = jo["data"]["utoken"].ToString();
         }
         public static void ExecRun()
         {
-            JObject jo = Request(API_ROOT + API_RUN, Json2Package.Create(ExecRunJSON()));
+            JObject jo = Request<JObject>(API_ROOT + API_RUN, Json2Package.Create(ExecRunJSON()));
             runpgid = jo["data"]["runPageId"].ToString();
             bNodeArray = jo["data"]["ibeacon"].ToString();
             tNodeArray = jo["data"]["gpsinfo"].ToString();
         }
         public static void FreeRun()
         {
-            JObject jo = Request(API_ROOT + API_RUN, Json2Package.Create(FreeRunJSON()));
+            JObject jo = Request<JObject>(API_ROOT + API_RUN, Json2Package.Create(FreeRunJSON()));
             runpgid = jo["data"]["runPageId"].ToString();
         }
-        public static void SaveExecRun(RunJSON runjson)
+        public static string SaveExecRun(RunJSON runjson)
         {
-            string json = runjson.ToJSON(runpgid, userid);
-            JObject jo = (JObject)JsonConvert.DeserializeObject(json);
-            jo["bNode"] = bNodeArray;
-            jo["tNode"] = tNodeArray;
-            jo["type"] = "2";
-            Console.WriteLine(jo.ToString());
-            string pkg = Json2Package.Create(jo.ToString());
-            Request(API_ROOT + API_SAVERUN, "", pkg);
+            string json = runjson.ToJSON(runpgid, userid, bNodeArray, tNodeArray);
+            string pkg = Json2Package.Create(json);
+            return Request<string>(API_ROOT + API_SAVERUN, "", pkg);
         }
-        public static void SaveFreeRun(RunJSON runjson)
+        public static string SaveFreeRun(RunJSON runjson)
         {
-            Request(API_ROOT + API_SAVERUN, "", Json2Package.Create(runjson.ToJSON(runpgid, userid)));
+            return Request<string>(API_ROOT + API_SAVERUN, "", Json2Package.Create(runjson.ToJSON(runpgid, userid)));
         }
 
         private static CookieContainer cookie = new CookieContainer();
-        private static JObject Request(string url, string get, string post = "")
+        private static T Request<T>(string url, string get, string post = "")
         {
             var request = (HttpWebRequest)WebRequest.Create(url + (get == "" ? "" : "?" + get));
 
@@ -133,15 +129,24 @@ namespace GXTY_CSharp
             var response = (HttpWebResponse)request.GetResponse();
             //response.Cookies = cookie.GetCookies(request.RequestUri);
             string str = new StreamReader(response.GetResponseStream()).ReadToEnd();
-            JObject jo = (JObject)JsonConvert.DeserializeObject(str);
-            if (jo["code"].ToString() != "200")
+            if (typeof(T) == typeof(string)) return (T)(str as object);
+            if (typeof(T) == typeof(JObject))
             {
-                Console.WriteLine("步骤执行失败!以下是服务器的返回值:");
-                Console.WriteLine(str);
-                Console.ReadLine();
-                Environment.Exit(0);
+                if (!string.IsNullOrEmpty(str))
+                {
+                    JObject jo = (JObject)JsonConvert.DeserializeObject(str);
+                    if (jo["code"].ToString() != "200")
+                    {
+                        Console.WriteLine("步骤执行失败!以下是服务器的返回值:");
+                        Console.WriteLine(str);
+                        Console.ReadLine();
+                        Environment.Exit(0);
+                    }
+                    return (T)(jo as object);
+                }
+
             }
-            return jo;
+            return default(T);
         }
     }
 }
