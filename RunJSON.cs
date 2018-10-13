@@ -90,7 +90,7 @@ namespace GXTY_CSharp
 
         }
 
-        private List<Position> PositionList;
+        public List<Position> PositionList { get; private set; }
 
         public RunJSON(Position start)
         {
@@ -101,13 +101,13 @@ namespace GXTY_CSharp
         {
             PositionList.Add(p);
         }
-        public void AutoAddPosition(Position delta, int num)
+        public void AutoAddPosition(Position delta, int num,float dt = 1f)
         {
             Position start = PositionList.Last();
             for (int i = 1; i <= num; i++)
             {
                 Position p = new Position(start.Latitude + delta.Latitude * (i - 1), start.Longtitude + delta.Longtitude * (i - 1));
-                p.SetTime(start.Time.AddSeconds(i));
+                p.SetTime(start.Time.AddSeconds(i * dt));
                 AddPosition(p);
             }
         }
@@ -139,7 +139,7 @@ namespace GXTY_CSharp
             str += "{";
             if(bNode == "")str += "\"bNode\":[],";
             else str += "\"bNode\":" + bNode + ",";
-            str += "\"buPin\":\"0.0\",";
+            str += "\"buPin\":\""+ new Random().Next(130,170)+ "\",";
             str += "\"duration\":\"" + (int)Duration + "\",";
             str += "\"endTime\":\"" + EndT + "\",";
             str += "\"frombp\":\"0\",";
@@ -162,7 +162,7 @@ namespace GXTY_CSharp
 
 
             str += "\"trend\":[";
-            //TODO:Trend??
+            str += "{\"x\":0.1,\"y\":49.966667}";
             str += "],";
 
             str += "\"type\":\""+RunType+"\",";
