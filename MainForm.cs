@@ -16,12 +16,14 @@ namespace GXTY_CSharp
         public List<Point> PointList { get; private set; } = new List<Point>();
 
         Image bgimg;
+        RunForm rf;
 
-        public MainForm()
+        public MainForm(RunForm runForm)
         {
             InitializeComponent();
             openFileDialog1.Filter = "图片|*.jpg;*.png";
             openFileDialog2.Filter = "GPX|*.gpx";
+            rf = runForm;
         }
         
 
@@ -185,6 +187,11 @@ namespace GXTY_CSharp
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            rf.Enabled = true;
         }
     }
 }

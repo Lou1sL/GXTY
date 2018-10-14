@@ -64,33 +64,53 @@ namespace GXTY_CSharp
             return "{\"initLocation\":\"\",\"type\":\"2\",\"userid\":\""+userid+"\"}";
         }
 
-        public static void Login(string mobile, string pass)
+        public static bool Login(string mobile, string pass)
         {
             JObject jo = Request<JObject>(API_ROOT + API_LOGIN, Json2Package.Create(LoginJSON(mobile, pass)));
+            Console.WriteLine(jo["msg"]);
+            if (jo["code"].ToString() != "200") return false;
+
+
             userid = jo["data"]["userid"].ToString();
             utoken = jo["data"]["utoken"].ToString();
+
+            return true;
         }
-        public static void ExecRun()
+        public static bool ExecRun()
         {
             JObject jo = Request<JObject>(API_ROOT + API_RUN, Json2Package.Create(ExecRunJSON()));
+            Console.WriteLine(jo["msg"]);
+            if (jo["code"].ToString() != "200") return false;
+
             runpgid = jo["data"]["runPageId"].ToString();
             bNodeArray = jo["data"]["ibeacon"].ToString();
             tNodeArray = jo["data"]["gpsinfo"].ToString();
+
+            return true;
         }
-        public static void FreeRun()
+        public static  bool FreeRun()
         {
             JObject jo = Request<JObject>(API_ROOT + API_RUN, Json2Package.Create(FreeRunJSON()));
+            Console.WriteLine(jo["msg"]);
+            if (jo["code"].ToString() != "200") return false;
+
             runpgid = jo["data"]["runPageId"].ToString();
+
+            return true;
         }
-        public static string SaveExecRun(RunJSON runjson)
+        public static bool SaveExecRun(RunJSON runjson)
         {
             string json = runjson.ToJSON(runpgid, userid, bNodeArray, tNodeArray);
             string pkg = Json2Package.Create(json);
-            return Request<string>(API_ROOT + API_SAVERUN, "", pkg);
+            JObject jo = Request<JObject>(API_ROOT + API_SAVERUN, "", pkg);
+            Console.WriteLine(jo["msg"] + " : " + jo["data"]["desc"]);
+            return (jo["code"].ToString() == "200");
         }
-        public static string SaveFreeRun(RunJSON runjson)
+        public static bool SaveFreeRun(RunJSON runjson)
         {
-            return Request<string>(API_ROOT + API_SAVERUN, "", Json2Package.Create(runjson.ToJSON(runpgid, userid)));
+            JObject jo = Request<JObject>(API_ROOT + API_SAVERUN, "", Json2Package.Create(runjson.ToJSON(runpgid, userid)));
+            Console.WriteLine(jo["msg"]+" : "+jo["data"]["desc"]);
+            return (jo["code"].ToString() == "200");
         }
 
         private static CookieContainer cookie = new CookieContainer();
@@ -135,16 +155,8 @@ namespace GXTY_CSharp
                 if (!string.IsNullOrEmpty(str))
                 {
                     JObject jo = (JObject)JsonConvert.DeserializeObject(str);
-                    if (jo["code"].ToString() != "200")
-                    {
-                        Console.WriteLine("步骤执行失败!以下是服务器的返回值:");
-                        Console.WriteLine(str);
-                        Console.ReadLine();
-                        Environment.Exit(0);
-                    }
                     return (T)(jo as object);
                 }
-
             }
             return default(T);
         }

@@ -9,44 +9,49 @@ namespace GXTY_CSharp
 {
     class Program
     {
+        public static RunJSON runJSON = new RunJSON(new RunJSON.Position(30.8669741312, 121.9183560969));
 
         [STAThread]
         static void Main(string[] args)
         {
             WriteTitle();
-
-            RunJSON runJSON = new RunJSON(new RunJSON.Position(30.8669741312, 121.9183560969));
-            runJSON.AutoAddPosition(new RunJSON.Position(0.0001f, 0f), new Random().Next(290, 330), 4f);
-
-            Console.Write("新功能:是否打开路径鼠标绘画工具?(y/n)");
-            if (Console.ReadLine() == "y")
-                Application.Run(new MainForm());
-
-            Console.Write("是否导入当前路径的map.gpx?(y/n)");
-            if (Console.ReadLine() == "y")
-            {
-                if (!File.Exists("map.gpx")) Console.WriteLine("map.gpx不存在!");
-                else runJSON.LoadGPX("map.gpx");
-            }
-
-
-            Console.Write("手机号:");
-            string mobile = Console.ReadLine();
-            Console.Write("密码:");
-            string pass = Console.ReadLine();
-            Console.WriteLine("登陆中...");
-            Network.Login(mobile, pass);
-            Console.WriteLine("登陆成功!请求开始体育锻炼中...");
-            Network.ExecRun();
-            Console.WriteLine("上传体育锻炼结果中...");
-            string rtn = Network.SaveExecRun(runJSON);
-            Console.WriteLine("上传完成!以下是服务器返回值↓");
-            Console.WriteLine(rtn);
-            Console.WriteLine("按回车键退出");
-            Console.ReadLine();
+            Application.Run(new RunForm());
         }
 
+        public static bool GoRun(bool usegpx, string mobile, string pass)
+        {
+            RunJSONInit(usegpx);
+            Console.WriteLine("登陆中...");
+            if (!Network.Login(mobile, pass)) return false;
+            Console.WriteLine("请求开始体育锻炼中...");
+            if (!Network.ExecRun()) return false;
+            Console.WriteLine("上传体育锻炼结果中...");
+            return Network.SaveExecRun(runJSON);
+        }
+        public static bool GoFreeRun(bool usegpx, string mobile, string pass)
+        {
+            RunJSONInit(usegpx);
+            Console.WriteLine("登陆中...");
+            if (!Network.Login(mobile, pass)) return false;
+            Console.WriteLine("登陆成功!请求开始自由跑中...");
+            if (!Network.FreeRun()) return false;
+            Console.WriteLine("上传自由跑结果中...");
+            return Network.SaveFreeRun(runJSON);
+        }
 
+        private static void RunJSONInit(bool usegpx)
+        {
+            runJSON = new RunJSON(new RunJSON.Position(30.8669741312, 121.9183560969));
+            runJSON.AutoAddPosition(new RunJSON.Position(0.0001f, 0f), new Random().Next(290, 330), 4f);
+
+            if (usegpx)
+            {
+                if (!File.Exists("map.gpx"))
+                    Console.WriteLine("map.gpx不存在!回退至自动生成路径!");
+                else
+                    runJSON.LoadGPX("map.gpx");
+            }
+        }
         private static void WriteTitle()
         {
             Console.WriteLine(@"                                                                          ");
@@ -88,7 +93,7 @@ namespace GXTY_CSharp
             Console.WriteLine(@" @@@@@@@@@@@@@@@@@@@@@@@@@O O]@ ,@@@@@O=o@^@@@@@@@@@@@@OOooo@@@@@@        ");
             Console.WriteLine("");
             Console.WriteLine("");
-            Console.WriteLine("--------------------高校体育APP 一键自动体育锻炼工具-----------------------");
+            Console.WriteLine("-----------------------高校体育APP一键自动体育锻炼工具---------------------");
             Console.WriteLine("---------------------------------制作:留白---------------------------------");
             Console.WriteLine("-------------------------https://github.com/RyuBAI-------------------------");
             Console.WriteLine("---------------------------------------------------------------------------");
