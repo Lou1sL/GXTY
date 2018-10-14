@@ -59,5 +59,15 @@ namespace GXTY_CSharp.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap SB___J_4HSXWXY__YNYS__D {
+            get {
+                object obj = ResourceManager.GetObject("SB%[]J{4HSXWXY~)YNYS)(D", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
