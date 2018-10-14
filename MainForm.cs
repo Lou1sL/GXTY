@@ -22,7 +22,6 @@ namespace GXTY_CSharp
         {
             InitializeComponent();
             openFileDialog1.Filter = "图片|*.jpg;*.png";
-            openFileDialog2.Filter = "GPX|*.gpx";
             rf = runForm;
         }
         
@@ -33,20 +32,12 @@ namespace GXTY_CSharp
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
             PointList.Add(e.Location);
+            pictureBox1.Refresh();
+            Draw();
         }
-
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (PointList.Count > 1)
-            {
-                Pen p = new Pen(Color.Black, 2);
-                Graphics g = pictureBox1.CreateGraphics();
-                for (int i = 0; i < PointList.Count - 1; i++)
-                {
-                    g.DrawLine(p, PointList[i], PointList[i + 1]);
-                }
-                p.Dispose();
-            }
+
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -87,19 +78,37 @@ namespace GXTY_CSharp
             double scale = Convert.ToSingle(textBox3.Text);
 
             RunJSON runJSON = new RunJSON(new RunJSON.Position(Convert.ToSingle(textBox4.Text), Convert.ToSingle(textBox5.Text)));
-            
-            if (PointList.Count != 0)
-                for (int i = 1; i < PointList.Count; i++)
-                {
-                    double dx = (PointList[i].X - PointList[i - 1].X) * scale;
-                    double dy = (PointList[i].Y - PointList[i - 1].Y) * scale;
-                    RunJSON.Position newP = new RunJSON.Position(runJSON.PositionList.Last().Latitude + dy, runJSON.PositionList.Last().Longtitude + dx);
-                    runJSON.AddPosition(newP);
-                }
+
+            foreach (Point p in PointList)
+                runJSON.AddPosition(PointToPosition(runJSON.PositionList[0], PointList[0], p, scale));
 
             runJSON.DistributeTimeSpan(TimeSpan.FromSeconds(Convert.ToSingle(textBox2.Text)));
-            label4.Text = "距离: "+runJSON.TotalDistance()+" 米";
+            label4.Text = "距离: " + runJSON.TotalDistance() + " 米";
             runJSON.WriteGPX("map.gpx");
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            double scale = Convert.ToSingle(textBox3.Text);
+
+            RunJSON runJSON = new RunJSON(new RunJSON.Position(0, 0));
+            runJSON.LoadGPX("map.gpx");
+            if (runJSON.PositionList.Count == 0) return;
+
+            PointList.Clear();
+            PointList.Add(new Point(pictureBox1.Width / 2, pictureBox1.Height / 2));
+
+            textBox4.Text = runJSON.PositionList[0].Latitude.ToString();
+            textBox5.Text = runJSON.PositionList[0].Longtitude.ToString();
+
+            foreach (RunJSON.Position p in runJSON.PositionList)
+                PointList.Add(PositionToPoint(runJSON.PositionList[0], PointList[0], p, scale));
+
+            textBox2.Text = (runJSON.PositionList.Last().Time - runJSON.PositionList.First().Time).TotalSeconds.ToString();
+            label4.Text = "距离: " + runJSON.TotalDistance() + " 米";
+
+            pictureBox1.Refresh();
+            Draw();
         }
 
         /* 
@@ -152,6 +161,7 @@ namespace GXTY_CSharp
         {
             if (PointList.Count > 0) PointList.RemoveAt(PointList.Count - 1);
             pictureBox1.Refresh();
+            Draw();
         }
 
         private void label6_Click(object sender, EventArgs e)
@@ -178,12 +188,7 @@ namespace GXTY_CSharp
         {
 
         }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-
-        }
-
+        
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -192,6 +197,72 @@ namespace GXTY_CSharp
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             rf.Enabled = true;
+        }
+
+        private void up_Click(object sender, EventArgs e)
+        {
+            if (PointList.Count == 0) return;
+            pictureBox1.Refresh();
+            Draw();
+            for (int i = 0; i < PointList.Count; i++)
+                PointList[i] = new Point(PointList[i].X, PointList[i].Y - 10);
+        }
+
+        private void down_Click(object sender, EventArgs e)
+        {
+            if (PointList.Count == 0) return;
+            pictureBox1.Refresh();
+            Draw();
+            for (int i = 0; i < PointList.Count; i++)
+                PointList[i] = new Point(PointList[i].X, PointList[i].Y + 10);
+        }
+
+        private void left_Click(object sender, EventArgs e)
+        {
+            if (PointList.Count == 0) return;
+            pictureBox1.Refresh();
+            Draw();
+            for (int i = 0; i < PointList.Count; i++)
+                PointList[i] = new Point(PointList[i].X - 10, PointList[i].Y);
+        }
+
+        private void right_Click(object sender, EventArgs e)
+        {
+            if (PointList.Count == 0) return;
+            pictureBox1.Refresh();
+            Draw();
+            for (int i = 0; i < PointList.Count; i++)
+                PointList[i] = new Point(PointList[i].X + 10, PointList[i].Y);
+        }
+
+
+        private void Draw()
+        {
+            if (PointList.Count > 1)
+            {
+                Pen p = new Pen(Color.Black, 2);
+                Graphics g = pictureBox1.CreateGraphics();
+                for (int i = 0; i < PointList.Count - 1; i++)
+                {
+                    g.DrawLine(p, PointList[i], PointList[i + 1]);
+                }
+                p.Dispose();
+            }
+        }
+
+
+        private static Point PositionToPoint(RunJSON.Position startposition, Point startpoint, RunJSON.Position position,double scale)
+        {
+            double dlon = (position.Longtitude - startposition.Longtitude) / scale / 1.2;
+            double dlat = (position.Latitude - startposition.Latitude) / scale;
+            return new Point(startpoint.X + (int)Math.Round(dlon), startpoint.Y - (int)Math.Round(dlat));
+        }
+
+        private static RunJSON.Position PointToPosition(RunJSON.Position startposition, Point startpoint, Point point, double scale)
+        {
+            double dx = (point.X - startpoint.X) * scale * 1.2;
+            double dy = (point.Y - startpoint.Y) * scale;
+            return new RunJSON.Position(startposition.Latitude - dy, startposition.Longtitude + dx);
         }
     }
 }
