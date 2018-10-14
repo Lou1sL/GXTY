@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace GXTY_CSharp
 {
@@ -56,7 +57,7 @@ namespace GXTY_CSharp
 
                 var distance = 2 * EARTH_RADIUS * Math.Asin(Math.Sqrt(h));
 
-                return distance;
+                return Math.Abs(distance);
             }
             public static double TotalDistance(List<Position> plist)
             {
@@ -109,6 +110,27 @@ namespace GXTY_CSharp
                 Position p = new Position(start.Latitude + delta.Latitude * (i - 1), start.Longtitude + delta.Longtitude * (i - 1));
                 p.SetTime(start.Time.AddSeconds(i * dt));
                 AddPosition(p);
+            }
+        }
+
+        public double TotalDistance()
+        {
+            return Position.TotalDistance(PositionList);
+        }
+        public void DistributeTimeSpan(TimeSpan span,DateTime? start = null)
+        {
+            if (PositionList.Count == 0) return;
+            if (start != null) PositionList[0].SetTime((DateTime)start);
+            if (PositionList.Count < 2) return;
+
+            double totaldist = TotalDistance();
+            for (int i = 1; i < PositionList.Count; i++)
+            {
+                double thisdist = PositionList[i].Distance(PositionList[i - 1]);
+                double rate = thisdist / totaldist;
+                //Console.WriteLine(rate);
+                double thisspan = span.TotalMilliseconds * rate;
+                PositionList[i].SetTime(PositionList[i - 1].Time + TimeSpan.FromMilliseconds(thisspan));
             }
         }
 
@@ -180,7 +202,32 @@ namespace GXTY_CSharp
             using (StreamWriter writer = new StreamWriter(path, true))
                 writer.WriteLine(ToGPX());
         }
+        public bool LoadGPX(string path)
+        {
+            if (!File.Exists(path)) return false;
 
+            List<Position> pList = new List<Position>();
 
+            XmlDocument doc = new XmlDocument();
+            doc.Load(path);
+            XmlNode root = doc.DocumentElement.SelectSingleNode("/gpx");
+            XmlNodeList wptlist = root.SelectNodes("wpt");
+            foreach(XmlNode wpt in wptlist)
+            {
+                double lat = Convert.ToDouble(wpt.Attributes["lat"].Value);
+                double lon = Convert.ToDouble(wpt.Attributes["lon"].Value);
+                
+                float ele = Convert.ToSingle(wpt.ChildNodes[0].InnerText);
+                DateTime t = Convert.ToDateTime(wpt.ChildNodes[1].InnerText.Replace("T", " ").Replace("Z", ""));
+
+                Position p = new Position(lat, lon,ele);
+                p.SetTime(t);
+                pList.Add(p);
+            }
+
+            PositionList = pList;
+            //Console.WriteLine(ToGPX());
+            return true;
+        }
     }
 }

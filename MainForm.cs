@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,12 +16,12 @@ namespace GXTY_CSharp
         public List<Point> PointList { get; private set; } = new List<Point>();
 
         Image bgimg;
-        
+
         public MainForm()
         {
             InitializeComponent();
             openFileDialog1.Filter = "图片|*.jpg;*.png";
-
+            openFileDialog2.Filter = "GPX|*.gpx";
         }
         
 
@@ -54,7 +55,6 @@ namespace GXTY_CSharp
         {
             pictureBox1.Refresh();
             PointList.Clear();
-            textBox1.Text = "";
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -82,33 +82,22 @@ namespace GXTY_CSharp
 
         private void button3_Click(object sender, EventArgs e)
         {
-            textBox1.Text = "";
-            if (PointList.Count < 2) return;
-            
             double scale = Convert.ToSingle(textBox3.Text);
 
-            RunJSON.Position lastP = new RunJSON.Position(Convert.ToSingle(textBox4.Text), Convert.ToSingle(textBox5.Text));
-
-            double dist = 0;
-            for(int i = 0; i < PointList.Count; i++)
-            {
-                if (i > 0)
+            RunJSON runJSON = new RunJSON(new RunJSON.Position(Convert.ToSingle(textBox4.Text), Convert.ToSingle(textBox5.Text)));
+            
+            if (PointList.Count != 0)
+                for (int i = 1; i < PointList.Count; i++)
                 {
                     double dx = (PointList[i].X - PointList[i - 1].X) * scale;
                     double dy = (PointList[i].Y - PointList[i - 1].Y) * scale;
-                    RunJSON.Position newP = new RunJSON.Position(lastP.Latitude + dx, lastP.Longtitude + dy);
-                    dist += newP.Distance(lastP);
-                    lastP = newP;
-
-                    textBox1.Text += textBox2.Text + ".AddPosition(new RunJSON.Position(" + lastP.Latitude + "," + lastP.Longtitude + "));\r\n";
+                    RunJSON.Position newP = new RunJSON.Position(runJSON.PositionList.Last().Latitude + dy, runJSON.PositionList.Last().Longtitude + dx);
+                    runJSON.AddPosition(newP);
                 }
-                else
-                {
-                    textBox1.Text += textBox2.Text + ".AddPosition(new RunJSON.Position(" + lastP.Latitude + "," + lastP.Longtitude + "));\r\n";
-                }
-            }
 
-            label4.Text = "距离: "+dist+" 米";
+            runJSON.DistributeTimeSpan(TimeSpan.FromSeconds(Convert.ToSingle(textBox2.Text)));
+            label4.Text = "距离: "+runJSON.TotalDistance()+" 米";
+            runJSON.WriteGPX("map.gpx");
         }
 
         /* 
@@ -121,15 +110,13 @@ namespace GXTY_CSharp
             if ((e.KeyChar < 48 || e.KeyChar > 57) && e.KeyChar != 8 && e.KeyChar != (char)('.') && e.KeyChar != (char)('-'))
             {
                 MessageBox.Show("请输入正确的数字");
-                this.textBox1.Text = "";
                 e.Handled = true;
             }
             if (e.KeyChar == (char)('-'))
             {
-                if (textBox1.Text != "")
+                if (((TextBox)sender).Text != "")
                 {
                     MessageBox.Show("请输入正确的数字");
-                    this.textBox1.Text = "";
                     e.Handled = true;
                 }
             }
@@ -137,28 +124,24 @@ namespace GXTY_CSharp
             if (e.KeyChar == (char)('.') && ((TextBox)sender).Text.IndexOf('.') != -1)
             {
                 MessageBox.Show("请输入正确的数字");
-                this.textBox1.Text = "";
                 e.Handled = true;
             }
             /*第一位不能为小数点*/
             if (e.KeyChar == (char)('.') && ((TextBox)sender).Text == "")
             {
                 MessageBox.Show("请输入正确的数字");
-                this.textBox1.Text = "";
                 e.Handled = true;
             }
             /*第一位是0，第二位必须为小数点*/
             if (e.KeyChar != (char)('.') && ((TextBox)sender).Text == "0")
             {
                 MessageBox.Show("请输入正确的数字");
-                this.textBox1.Text = "";
                 e.Handled = true;
             }
             /*第一位是负号，第二位不能为小数点*/
             if (((TextBox)sender).Text == "-" && e.KeyChar == (char)('.'))
             {
                 MessageBox.Show("请输入正确的数字");
-                this.textBox1.Text = "";
                 e.Handled = true;
             }
         }
@@ -167,6 +150,41 @@ namespace GXTY_CSharp
         {
             if (PointList.Count > 0) PointList.RemoveAt(PointList.Count - 1);
             pictureBox1.Refresh();
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
