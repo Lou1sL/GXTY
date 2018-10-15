@@ -13,8 +13,6 @@ namespace GXTY_CSharp
     public static class Network
     {
 
-
-
         private const string API_ROOT = "http://gxhttp.chinacloudapp.cn/api/";
         private const string API_LOGIN = "reg/login";
         private const string API_RUN = "run/runPage";

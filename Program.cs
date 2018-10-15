@@ -14,7 +14,6 @@ namespace GXTY_CSharp
         [STAThread]
         static void Main(string[] args)
         {
-            WriteTitle();
             Application.Run(new RunForm());
         }
 
@@ -73,7 +72,7 @@ namespace GXTY_CSharp
                     runJSON.LoadGPX("map.gpx");
             }
         }
-        private static void WriteTitle()
+        public static void WriteTitle()
         {
             Console.WriteLine(@"                                                                          ");
             Console.WriteLine(@"                                    ]/O[[[[[[[@\`                         ");
