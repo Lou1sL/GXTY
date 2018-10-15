@@ -18,25 +18,46 @@ namespace GXTY_CSharp
             Application.Run(new RunForm());
         }
 
-        public static bool GoRun(bool usegpx, string mobile, string pass)
+        public static Network.ReturnMessage GoRun(bool usegpx, string mobile, string pass)
         {
             RunJSONInit(usegpx);
+            Network.ReturnMessage rm;
+
             Console.WriteLine("登陆中...");
-            if (!Network.Login(mobile, pass)) return false;
+            rm = Network.Login(mobile, pass);
+            Console.WriteLine(rm.Msg);
+            if (rm.Code != 200) return rm;
+
             Console.WriteLine("请求开始体育锻炼中...");
-            if (!Network.ExecRun()) return false;
+            rm = Network.ExecRun();
+            Console.WriteLine(rm.Msg);
+            if (rm.Code != 200) return rm;
+
+
             Console.WriteLine("上传体育锻炼结果中...");
-            return Network.SaveExecRun(runJSON);
+            rm = Network.SaveExecRun(runJSON);
+            Console.WriteLine(rm.Msg + " : "+rm.Data["desc"]);
+            return rm;
         }
-        public static bool GoFreeRun(bool usegpx, string mobile, string pass)
+        public static Network.ReturnMessage GoFreeRun(bool usegpx, string mobile, string pass)
         {
             RunJSONInit(usegpx);
+            Network.ReturnMessage rm;
+
             Console.WriteLine("登陆中...");
-            if (!Network.Login(mobile, pass)) return false;
-            Console.WriteLine("登陆成功!请求开始自由跑中...");
-            if (!Network.FreeRun()) return false;
+            rm = Network.Login(mobile, pass);
+            Console.WriteLine(rm.Msg);
+            if (rm.Code != 200) return rm;
+
+            Console.WriteLine("请求开始自由跑中...");
+            rm = Network.FreeRun();
+            Console.WriteLine(rm.Msg);
+            if (rm.Code != 200) return rm;
+
             Console.WriteLine("上传自由跑结果中...");
-            return Network.SaveFreeRun(runJSON);
+            rm = Network.SaveFreeRun(runJSON);
+            Console.WriteLine(rm.Msg + " : " + rm.Data["desc"]);
+            return rm;
         }
 
         private static void RunJSONInit(bool usegpx)
