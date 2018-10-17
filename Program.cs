@@ -9,7 +9,8 @@ namespace GXTY_CSharp
 {
     class Program
     {
-        public static RunJSON runJSON = new RunJSON(new RunJSON.Position(30.8669741312, 121.9183560969));
+        public static readonly RunJSON.Position SHOUPosition = new RunJSON.Position(30.887422, 121.902849);
+        public static RunJSON runJSON = new RunJSON(SHOUPosition);
 
         [STAThread]
         static void Main(string[] args)
@@ -61,8 +62,8 @@ namespace GXTY_CSharp
 
         private static void RunJSONInit(bool usegpx)
         {
-            runJSON = new RunJSON(new RunJSON.Position(30.8669741312, 121.9183560969));
-            runJSON.AutoAddPosition(new RunJSON.Position(0.0001f, 0f), new Random().Next(290, 330), 4f);
+            runJSON = new RunJSON(SHOUPosition);
+            runJSON.AutoAddPosition(new RunJSON.Position(0.0001f, 0f), new Random().Next(240, 290), 4f);
 
             if (usegpx)
             {

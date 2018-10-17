@@ -162,7 +162,7 @@
             // 
             this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.BackColor = System.Drawing.Color.Transparent;
+            this.button3.BackColor = System.Drawing.Color.Black;
             this.button3.Cursor = System.Windows.Forms.Cursors.Hand;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.ForeColor = System.Drawing.Color.White;
@@ -229,7 +229,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(173, 12);
             this.label3.TabIndex = 11;
-            this.label3.Text = "v1.10 确定支持APP版本:v2.2.6";
+            this.label3.Text = "v1.11 确定支持APP版本:v2.2.6";
             this.label3.MouseDown += new System.Windows.Forms.MouseEventHandler(this.RunForm_MouseDown);
             this.label3.MouseMove += new System.Windows.Forms.MouseEventHandler(this.RunForm_MouseMove);
             this.label3.MouseUp += new System.Windows.Forms.MouseEventHandler(this.RunForm_MouseUp);
@@ -283,7 +283,7 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(40, 23);
             this.button5.TabIndex = 14;
-            this.button5.Text = ">";
+            this.button5.Text = "按";
             this.button5.UseVisualStyleBackColor = false;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 

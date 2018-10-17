@@ -177,7 +177,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(95, 21);
             this.textBox4.TabIndex = 13;
-            this.textBox4.Text = "30.8669741312";
+            this.textBox4.Text = "30.887422";
             this.textBox4.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPress);
             // 
             // textBox5
@@ -188,7 +188,7 @@
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(95, 21);
             this.textBox5.TabIndex = 14;
-            this.textBox5.Text = "121.9183560969";
+            this.textBox5.Text = "121.902849";
             this.textBox5.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.KeyPress);
             // 
             // savebtn
@@ -297,6 +297,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(504, 461);
             this.Controls.Add(this.down);
             this.Controls.Add(this.right);

@@ -24,7 +24,17 @@ namespace GXTY_CSharp
 
 
             if (Properties.Settings.Default.FirstLaunch)
-                MessageBox.Show(this,"v1.10\n\n修复了一些BUG\n美化UI\n添加对保存密码的支持\n\n制作：留白RyuBAI", "更新日志");
+                MessageBox.Show(this,
+                    "v1.11\n\n" +
+                    
+                    "修复绘制路径时间不合理的问题\n" +
+                    "修正上海海洋大学的坐标点位置\n\n" +
+                    
+                    "本程序不以盈利为目的\n" +
+                    "如果你是花钱购买的本程序，说明你被坑了，请节哀\n\n" +
+
+                    "制作：留白(RyuBAI)\n"
+                    , "更新日志");
             Properties.Settings.Default.FirstLaunch = false;
             
             checkBox1.Checked = Properties.Settings.Default.IsSave;
