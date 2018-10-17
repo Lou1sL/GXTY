@@ -208,25 +208,36 @@ namespace GXTY_CSharp
 
             List<Position> pList = new List<Position>();
 
-            XmlDocument doc = new XmlDocument();
-            doc.Load(path);
-            XmlNode root = doc.DocumentElement.SelectSingleNode("/gpx");
-            XmlNodeList wptlist = root.SelectNodes("wpt");
-            foreach(XmlNode wpt in wptlist)
+            try
             {
-                double lat = Convert.ToDouble(wpt.Attributes["lat"].Value);
-                double lon = Convert.ToDouble(wpt.Attributes["lon"].Value);
-                
-                float ele = Convert.ToSingle(wpt.ChildNodes[0].InnerText);
-                DateTime t = Convert.ToDateTime(wpt.ChildNodes[1].InnerText.Replace("T", " ").Replace("Z", ""));
+                XmlDocument doc = new XmlDocument();
+                doc.Load(path);
+                XmlNode root = doc.DocumentElement.SelectSingleNode("/gpx");
+                XmlNodeList wptlist = root.SelectNodes("wpt");
 
-                Position p = new Position(lat, lon,ele);
-                p.SetTime(t);
-                pList.Add(p);
+                for (int i = 0; i < wptlist.Count; i++)
+                {
+                    double lat = Convert.ToDouble(wptlist[i].Attributes["lat"].Value);
+                    double lon = Convert.ToDouble(wptlist[i].Attributes["lon"].Value);
+
+                    float ele = Convert.ToSingle(wptlist[i].ChildNodes[0].InnerText);
+                    DateTime t;
+                    if (i == 0) t = DateTime.Now;
+                    else t = pList.Last().Time +
+                            (Convert.ToDateTime(wptlist[i].ChildNodes[1].InnerText.Replace("T", " ").Replace("Z", "")) -
+                            Convert.ToDateTime(wptlist[i - 1].ChildNodes[1].InnerText.Replace("T", " ").Replace("Z", "")));
+
+                    Position p = new Position(lat, lon, ele);
+                    p.SetTime(t);
+                    pList.Add(p);
+                }
+            }catch(Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
             }
 
             PositionList = pList;
-            //Console.WriteLine(ToGPX());
             return true;
         }
     }

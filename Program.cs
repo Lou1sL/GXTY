@@ -66,10 +66,8 @@ namespace GXTY_CSharp
 
             if (usegpx)
             {
-                if (!File.Exists("map.gpx"))
-                    Console.WriteLine("map.gpx不存在!回退至自动生成路径!");
-                else
-                    runJSON.LoadGPX("map.gpx");
+                if (!runJSON.LoadGPX("map.gpx"))
+                    Console.WriteLine("map.gpx不存在/有问题!回退至自动生成路径!");
             }
         }
         public static void WriteTitle()
