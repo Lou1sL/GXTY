@@ -53,20 +53,28 @@ namespace GXTY_CSharp
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Enabled = false;
-            Network.ReturnMessage rm = Program.GoRun(radioButton1.Checked, textBox1.Text, textBox2.Text);
-            MessageBox.Show(rm.Msg);
-            Enabled = true;
+            R(true);
         }
         private void button2_Click(object sender, EventArgs e)
         {
+            R(false);
+        }
+
+        private async void R(bool IsExecOrNot)
+        {
             Enabled = false;
-            Network.ReturnMessage rm = Program.GoFreeRun(radioButton1.Checked, textBox1.Text, textBox2.Text);
+            Network.ReturnMessage rm = IsExecOrNot?await ExecRun():await FreeRun();
             MessageBox.Show(rm.Msg);
             Enabled = true;
         }
-
-
+        private Task<Network.ReturnMessage> ExecRun()
+        {
+            return Task.Run(() => { return Program.GoRun(radioButton1.Checked, textBox1.Text, textBox2.Text); });
+        }
+        private Task<Network.ReturnMessage> FreeRun()
+        {
+            return Task.Run(() => { return Program.GoFreeRun(radioButton1.Checked, textBox1.Text, textBox2.Text); });
+        }
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
         }
