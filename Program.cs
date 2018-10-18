@@ -27,14 +27,14 @@ namespace GXTY_CSharp
             if (rm.Code != 200) return rm;
 
             Console.WriteLine("请求开始体育锻炼中...");
-            rm = Network.ExecRun();
+            rm = Network.AskExecRun();
             Console.WriteLine(rm.Msg);
             if (rm.Code != 200) return rm;
 
+            string pkg = Network.GenerateExecRunPackage(usegpx);
+            Properties.Settings.Default.Package = pkg;
+            Properties.Settings.Default.Save();
 
-            Console.WriteLine("上传体育锻炼结果中...");
-            rm = Network.SaveExecRun(usegpx);
-            Console.WriteLine(rm.Msg + " : "+rm.Data["desc"]);
             return rm;
         }
         public static Network.ReturnMessage GoFreeRun(bool usegpx, string mobile, string pass)
@@ -47,16 +47,30 @@ namespace GXTY_CSharp
             if (rm.Code != 200) return rm;
 
             Console.WriteLine("请求开始自由跑中...");
-            rm = Network.FreeRun();
+            rm = Network.AskFreeRun();
             Console.WriteLine(rm.Msg);
             if (rm.Code != 200) return rm;
 
-            Console.WriteLine("上传自由跑结果中...");
-            rm = Network.SaveFreeRun(usegpx);
+            string pkg = Network.GenerateExecRunPackage(usegpx);
+            Properties.Settings.Default.Package = pkg;
+            Properties.Settings.Default.Save();
+
+            return rm;
+        }
+        public static Network.ReturnMessage FinRun()
+        {
+            string pkg = Properties.Settings.Default.Package;
+            if (string.IsNullOrEmpty(pkg)) return null;
+
+            Properties.Settings.Default.Package = "";
+            Properties.Settings.Default.Save();
+
+            Network.ReturnMessage rm;
+            Console.WriteLine("上传跑步结果中...");
+            rm = Network.SaveExecRun(pkg);
             Console.WriteLine(rm.Msg + " : " + rm.Data["desc"]);
             return rm;
         }
-        
         public static void WriteTitle()
         {
             Console.WriteLine(@"                                                                          ");

@@ -49,7 +49,24 @@ namespace GXTY_CSharp
                 textBox2.Text = Properties.Settings.Default.Pass;
             }
 
-            
+
+
+
+            if(Properties.Settings.Default.LastGetJson != null && (DateTime.Now - Properties.Settings.Default.LastGetJson).TotalMinutes < 30)
+            {
+                button1.Enabled = false;
+                MessageBox.Show("不是我犯贱，但是为了不被封号，请再等待 " + (int)(30 - (DateTime.Now - Properties.Settings.Default.LastGetJson).TotalMinutes) + " 分钟吧！", "警告");
+                Environment.Exit(0);
+            }
+            else if(!string.IsNullOrEmpty(Properties.Settings.Default.Package))
+            {
+                Program.FinRun();
+                Properties.Settings.Default.Package = null;
+                Properties.Settings.Default.Save();
+            }
+
+
+
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -58,40 +75,34 @@ namespace GXTY_CSharp
             new MainForm(this).Show();
         }
 
+        /// <summary>
+        /// 开始体育锻炼
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            //Program.GoRun(radioButton1.Checked, textBox1.Text, textBox2.Text);
-            R(true);
+            Network.ReturnMessage rm = Program.GoRun(radioButton1.Checked, textBox1.Text, textBox2.Text);
+            MessageBox.Show(rm.Msg);
+
+            if(rm.Code == 200)
+            {
+                button1.Enabled = false;
+                button2.Enabled = false;
+                Properties.Settings.Default.LastGetJson = DateTime.Now;
+                MessageBox.Show("请在半小时后重新打开本程序，跑步才算做完成！注意：请不要在这段时间内用手机登陆这个账号！");
+            }
         }
+        /// <summary>
+        /// 开始自由跑
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button2_Click(object sender, EventArgs e)
         {
             //Program.GoFreeRun(radioButton1.Checked, textBox1.Text, textBox2.Text);
-            //R(false);
         }
-
-        private async void R(bool IsExecOrNot)
-        {
-            if(Properties.Settings.Default.LastSave!=null &&(DateTime.Now - Properties.Settings.Default.LastSave).TotalMinutes < 45)
-            {
-                MessageBox.Show("不是我犯贱，但是现在间隔时间过短的跑步数据上传对方直接机器人自动秒封，请再等待 "+ (int)(45 - (DateTime.Now - Properties.Settings.Default.LastSave).TotalMinutes) +" 分钟吧", "警告");
-                //return;
-            }
-            Properties.Settings.Default.LastSave = DateTime.Now;
-            Properties.Settings.Default.Save();
-
-            Enabled = false;
-            Network.ReturnMessage rm = IsExecOrNot?await ExecRun():await FreeRun();
-            MessageBox.Show(rm.Msg);
-            Enabled = true;
-        }
-        private Task<Network.ReturnMessage> ExecRun()
-        {
-            return Task.Run(() => { return Program.GoRun(radioButton1.Checked, textBox1.Text, textBox2.Text); });
-        }
-        private Task<Network.ReturnMessage> FreeRun()
-        {
-            return Task.Run(() => { return Program.GoFreeRun(radioButton1.Checked, textBox1.Text, textBox2.Text); });
-        }
+        
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
         }

@@ -75,7 +75,7 @@ namespace GXTY_CSharp
             }
             return rm;
         }
-        public static ReturnMessage ExecRun()
+        public static ReturnMessage AskExecRun()
         {
             ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_RUN, Json2Package.Create(ExecRunJSON())));
             if (rm.Code == 200)
@@ -86,7 +86,7 @@ namespace GXTY_CSharp
             }
             return rm;
         }
-        public static ReturnMessage FreeRun()
+        public static ReturnMessage AskFreeRun()
         {
             ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_RUN, Json2Package.Create(FreeRunJSON())));
             if (rm.Code == 200)
@@ -95,12 +95,13 @@ namespace GXTY_CSharp
             }
             return rm;
         }
-        public static ReturnMessage SaveExecRun(bool readgpx)
+
+        public static string GenerateExecRunPackage(bool readgpx)
         {
 
             JArray tNode = (JArray)JsonConvert.DeserializeObject(tNodeArray);
             RunJSON runJSON = new RunJSON(new RunJSON.Position(Convert.ToDouble(tNode[0]["latitude"]), Convert.ToDouble(tNode[0]["longitude"])));
-            
+
             JArray bNode = (JArray)JsonConvert.DeserializeObject(bNodeArray);
             foreach (JObject bn in bNode)
                 runJSON.AddPosition(new RunJSON.Position(Convert.ToDouble(bn["position"]["latitude"]), Convert.ToDouble(bn["position"]["longitude"])));
@@ -116,14 +117,18 @@ namespace GXTY_CSharp
                 if (!runJSON.LoadGPX("map.gpx"))
                     Console.WriteLine("map.gpx不存在/有问题!回退至自动生成路径!");
             }
-
             string json = runJSON.ToJSON(runpgid, userid, bNodeArray, tNodeArray);
             string pkg = Json2Package.Create(json);
+
+            return pkg;
+        }
+        public static ReturnMessage SaveExecRun(string pkg)
+        {
             ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg));
             return rm;
-
         }
-        public static ReturnMessage SaveFreeRun(bool readgpx)
+
+        public static string GenerateFreeRunPackage(bool readgpx)
         {
             RunJSON runJSON = new RunJSON(Program.SHOUPosition);
             runJSON.AutoAddPosition(new RunJSON.Position(0.0001f, 0f), new Random().Next(240, 290), 4f);
@@ -135,6 +140,11 @@ namespace GXTY_CSharp
 
             string json = runJSON.ToJSON(runpgid, userid);
             string pkg = Json2Package.Create(json);
+
+            return pkg;
+        }
+        public static ReturnMessage SaveFreeRun(string pkg)
+        {
             ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg));
             return rm;
         }
