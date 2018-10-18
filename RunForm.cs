@@ -26,10 +26,15 @@ namespace GXTY_CSharp
             if (Properties.Settings.Default.FirstLaunch)
                 MessageBox.Show(this,
                     "v1.11\n\n" +
-                    
+
+                    "警告：使用自己绘制的路径图案未来可能导致封号！\n" +
+
                     "修复绘制路径时间不合理的问题\n" +
+                    "紧急修复可能导致封号的途径点未经过的问题\n" +
+                    "自动生成路线低级伪造\n" +
+                    "安全原因暂时停用自由跑功能\n" +
                     "修正上海海洋大学的坐标点位置\n\n" +
-                    
+
                     "本程序不以盈利为目的\n" +
                     "如果你是花钱购买的本程序，说明你被坑了，请节哀\n\n" +
 
@@ -43,6 +48,8 @@ namespace GXTY_CSharp
                 textBox1.Text = Properties.Settings.Default.Mobile;
                 textBox2.Text = Properties.Settings.Default.Pass;
             }
+
+            
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -53,15 +60,25 @@ namespace GXTY_CSharp
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //Program.GoRun(radioButton1.Checked, textBox1.Text, textBox2.Text);
             R(true);
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            R(false);
+            //Program.GoFreeRun(radioButton1.Checked, textBox1.Text, textBox2.Text);
+            //R(false);
         }
 
         private async void R(bool IsExecOrNot)
         {
+            if(Properties.Settings.Default.LastSave!=null &&(DateTime.Now - Properties.Settings.Default.LastSave).TotalMinutes < 45)
+            {
+                MessageBox.Show("不是我犯贱，但是现在间隔时间过短的跑步数据上传对方直接机器人自动秒封，请再等待 "+ (int)(45 - (DateTime.Now - Properties.Settings.Default.LastSave).TotalMinutes) +" 分钟吧", "警告");
+                //return;
+            }
+            Properties.Settings.Default.LastSave = DateTime.Now;
+            Properties.Settings.Default.Save();
+
             Enabled = false;
             Network.ReturnMessage rm = IsExecOrNot?await ExecRun():await FreeRun();
             MessageBox.Show(rm.Msg);

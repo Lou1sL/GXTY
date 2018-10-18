@@ -99,7 +99,7 @@ namespace GXTY_CSharp
             PointList.Add(new Point(pictureBox1.Width / 2, pictureBox1.Height / 2));
 
             textBox4.Text = runJSON.PositionList[0].Latitude.ToString();
-            textBox5.Text = runJSON.PositionList[0].Longtitude.ToString();
+            textBox5.Text = runJSON.PositionList[0].Longitude.ToString();
 
             foreach (RunJSON.Position p in runJSON.PositionList)
                 PointList.Add(PositionToPoint(runJSON.PositionList[0], PointList[0], p, scale));
@@ -253,7 +253,7 @@ namespace GXTY_CSharp
 
         private static Point PositionToPoint(RunJSON.Position startposition, Point startpoint, RunJSON.Position position,double scale)
         {
-            double dlon = (position.Longtitude - startposition.Longtitude) / scale / 1.2;
+            double dlon = (position.Longitude - startposition.Longitude) / scale / 1.2;
             double dlat = (position.Latitude - startposition.Latitude) / scale;
             return new Point(startpoint.X + (int)Math.Round(dlon), startpoint.Y - (int)Math.Round(dlat));
         }
@@ -262,7 +262,7 @@ namespace GXTY_CSharp
         {
             double dx = (point.X - startpoint.X) * scale * 1.2;
             double dy = (point.Y - startpoint.Y) * scale;
-            return new RunJSON.Position(startposition.Latitude - dy, startposition.Longtitude + dx);
+            return new RunJSON.Position(startposition.Latitude - dy, startposition.Longitude + dx);
         }
     }
 }

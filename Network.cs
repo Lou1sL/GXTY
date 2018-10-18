@@ -95,16 +95,47 @@ namespace GXTY_CSharp
             }
             return rm;
         }
-        public static ReturnMessage SaveExecRun(RunJSON runjson)
+        public static ReturnMessage SaveExecRun(bool readgpx)
         {
-            string json = runjson.ToJSON(runpgid, userid, bNodeArray, tNodeArray);
+
+            JArray tNode = (JArray)JsonConvert.DeserializeObject(tNodeArray);
+            RunJSON runJSON = new RunJSON(new RunJSON.Position(Convert.ToDouble(tNode[0]["latitude"]), Convert.ToDouble(tNode[0]["longitude"])));
+            
+            JArray bNode = (JArray)JsonConvert.DeserializeObject(bNodeArray);
+            foreach (JObject bn in bNode)
+                runJSON.AddPosition(new RunJSON.Position(Convert.ToDouble(bn["position"]["latitude"]), Convert.ToDouble(bn["position"]["longitude"])));
+
+            while (runJSON.TotalDistance() <= 2000)
+                runJSON.AddPosition(new RunJSON.Position(runJSON.PositionList.Last().Latitude + 0.0001f, 0f));
+
+
+            runJSON.DistributeTimeSpan(TimeSpan.FromMinutes(25), DateTime.Now);
+
+            if (readgpx)
+            {
+                if (!runJSON.LoadGPX("map.gpx"))
+                    Console.WriteLine("map.gpx不存在/有问题!回退至自动生成路径!");
+            }
+
+            string json = runJSON.ToJSON(runpgid, userid, bNodeArray, tNodeArray);
             string pkg = Json2Package.Create(json);
             ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg));
             return rm;
+
         }
-        public static ReturnMessage SaveFreeRun(RunJSON runjson)
+        public static ReturnMessage SaveFreeRun(bool readgpx)
         {
-            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", Json2Package.Create(runjson.ToJSON(runpgid, userid))));
+            RunJSON runJSON = new RunJSON(Program.SHOUPosition);
+            runJSON.AutoAddPosition(new RunJSON.Position(0.0001f, 0f), new Random().Next(240, 290), 4f);
+            if (readgpx)
+            {
+                if (!runJSON.LoadGPX("map.gpx"))
+                    Console.WriteLine("map.gpx不存在/有问题!回退至自动生成路径!");
+            }
+
+            string json = runJSON.ToJSON(runpgid, userid);
+            string pkg = Json2Package.Create(json);
+            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg));
             return rm;
         }
 
@@ -151,6 +182,9 @@ namespace GXTY_CSharp
                 {
                     JObject jo = (JObject)JsonConvert.DeserializeObject(str);
                     return (T)(jo as object);
+                }else
+                {
+                    throw new Exception("Server responded nothing!");
                 }
             }
             return default(T);
@@ -167,7 +201,7 @@ namespace GXTY_CSharp
             {
                 Code = Convert.ToInt32(jo["code"].ToString());
                 Msg = jo["msg"].ToString();
-                Data = (JObject)JsonConvert.DeserializeObject(jo["data"].ToString());
+                if (jo["data"] != null) Data = (JObject)JsonConvert.DeserializeObject(jo["data"].ToString());
             }
         }
     }

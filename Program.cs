@@ -10,7 +10,6 @@ namespace GXTY_CSharp
     class Program
     {
         public static readonly RunJSON.Position SHOUPosition = new RunJSON.Position(30.887422, 121.902849);
-        public static RunJSON runJSON = new RunJSON(SHOUPosition);
 
         [STAThread]
         static void Main(string[] args)
@@ -20,7 +19,6 @@ namespace GXTY_CSharp
 
         public static Network.ReturnMessage GoRun(bool usegpx, string mobile, string pass)
         {
-            RunJSONInit(usegpx);
             Network.ReturnMessage rm;
 
             Console.WriteLine("登陆中...");
@@ -35,13 +33,12 @@ namespace GXTY_CSharp
 
 
             Console.WriteLine("上传体育锻炼结果中...");
-            rm = Network.SaveExecRun(runJSON);
+            rm = Network.SaveExecRun(usegpx);
             Console.WriteLine(rm.Msg + " : "+rm.Data["desc"]);
             return rm;
         }
         public static Network.ReturnMessage GoFreeRun(bool usegpx, string mobile, string pass)
         {
-            RunJSONInit(usegpx);
             Network.ReturnMessage rm;
 
             Console.WriteLine("登陆中...");
@@ -55,22 +52,11 @@ namespace GXTY_CSharp
             if (rm.Code != 200) return rm;
 
             Console.WriteLine("上传自由跑结果中...");
-            rm = Network.SaveFreeRun(runJSON);
+            rm = Network.SaveFreeRun(usegpx);
             Console.WriteLine(rm.Msg + " : " + rm.Data["desc"]);
             return rm;
         }
-
-        private static void RunJSONInit(bool usegpx)
-        {
-            runJSON = new RunJSON(SHOUPosition);
-            runJSON.AutoAddPosition(new RunJSON.Position(0.0001f, 0f), new Random().Next(240, 290), 4f);
-
-            if (usegpx)
-            {
-                if (!runJSON.LoadGPX("map.gpx"))
-                    Console.WriteLine("map.gpx不存在/有问题!回退至自动生成路径!");
-            }
-        }
+        
         public static void WriteTitle()
         {
             Console.WriteLine(@"                                                                          ");

@@ -13,12 +13,12 @@ namespace GXTY_CSharp
         public class Position
         {
             public double Latitude { get; private set; }
-            public double Longtitude { get; private set; }
+            public double Longitude { get; private set; }
             public float Elevation { get; private set; }
             public DateTime Time { get; private set; }
             public Position(double lat, double lon, float ele = -1.15f)
             {
-                Latitude = lat; Longtitude = lon; Elevation = ele; Time = DateTime.Now;
+                Latitude = lat; Longitude = lon; Elevation = ele; Time = DateTime.Now;
             }
             public void SetTime(DateTime t)
             {
@@ -27,7 +27,7 @@ namespace GXTY_CSharp
             public string ToGPX()
             {
                 string str = string.Empty;
-                str += "<wpt lat=\"" + Latitude + "\" lon=\"" + Longtitude + "\">\r\n";
+                str += "<wpt lat=\"" + Latitude + "\" lon=\"" + Longitude + "\">\r\n";
                 str += "    <ele>" + Elevation + "</ele>\r\n";
                 str += "    <time>" + Time.ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss") + "Z</time>\r\n";
                 str += "</wpt>\r\n";
@@ -36,7 +36,7 @@ namespace GXTY_CSharp
 
             public string ToJson()
             {
-                return "{\"latitude\":" + Latitude + ",\"longitude\":" + Longtitude + "}";
+                return "{\"latitude\":" + Latitude + ",\"longitude\":" + Longitude + "}";
             }
 
             public const double EARTH_RADIUS = 6371000;
@@ -44,9 +44,9 @@ namespace GXTY_CSharp
             {
                 //经纬转弧度
                 double lat1 = ConvertDegreesToRadians(Latitude);
-                double lon1 = ConvertDegreesToRadians(Longtitude);
+                double lon1 = ConvertDegreesToRadians(Longitude);
                 double lat2 = ConvertDegreesToRadians(p2.Latitude);
-                double lon2 = ConvertDegreesToRadians(p2.Longtitude);
+                double lon2 = ConvertDegreesToRadians(p2.Longitude);
 
                 //差值
                 var vLon = Math.Abs(lon1 - lon2);
@@ -107,7 +107,7 @@ namespace GXTY_CSharp
             Position start = PositionList.Last();
             for (int i = 1; i <= num; i++)
             {
-                Position p = new Position(start.Latitude + delta.Latitude * (i - 1), start.Longtitude + delta.Longtitude * (i - 1));
+                Position p = new Position(start.Latitude + delta.Latitude * (i - 1), start.Longitude + delta.Longitude * (i - 1));
                 p.SetTime(start.Time.AddSeconds(i * dt));
                 AddPosition(p);
             }
