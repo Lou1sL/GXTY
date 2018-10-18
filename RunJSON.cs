@@ -191,7 +191,7 @@ namespace GXTY_CSharp
             str += "\"userid\":\"" + userid + "\"";
             str += "}";
 
-            return str;
+            return str.Replace(" ","").Replace("\n","");
         }
 
         public void WriteGPX(string path)

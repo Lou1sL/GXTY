@@ -105,11 +105,11 @@ namespace GXTY_CSharp
             foreach (JObject bn in bNode)
                 runJSON.AddPosition(new RunJSON.Position(Convert.ToDouble(bn["position"]["latitude"]), Convert.ToDouble(bn["position"]["longitude"])));
 
-            while (runJSON.TotalDistance() <= 2000)
+            while (runJSON.TotalDistance() < 2000)
                 runJSON.AddPosition(new RunJSON.Position(runJSON.PositionList.Last().Latitude + 0.0001f, 0f));
 
 
-            runJSON.DistributeTimeSpan(TimeSpan.FromMinutes(25), DateTime.Now);
+            runJSON.DistributeTimeSpan(TimeSpan.FromMinutes(25), DateTime.Now - TimeSpan.FromMinutes(25));
 
             if (readgpx)
             {
