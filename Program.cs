@@ -31,8 +31,10 @@ namespace GXTY_CSharp
             Console.WriteLine(rm.Msg);
             if (rm.Code != 200) return rm;
 
-            string pkg = Network.GenerateExecRunPackage(usegpx);
-            Properties.Settings.Default.Package = pkg;
+            Network.RunPackage pkg = Network.GenerateExecRunPackage(usegpx);
+            Properties.Settings.Default.Package = pkg.post;
+            Properties.Settings.Default.Package_Cookie = pkg.cookie;
+            Properties.Settings.Default.Package_Utoken = pkg.utoken;
             Properties.Settings.Default.Save();
 
             return rm;
@@ -51,24 +53,31 @@ namespace GXTY_CSharp
             Console.WriteLine(rm.Msg);
             if (rm.Code != 200) return rm;
 
-            string pkg = Network.GenerateExecRunPackage(usegpx);
-            Properties.Settings.Default.Package = pkg;
+            Network.RunPackage pkg = Network.GenerateFreeRunPackage(usegpx);
+            Properties.Settings.Default.Package = pkg.post;
+            Properties.Settings.Default.Package_Cookie = pkg.cookie;
+            Properties.Settings.Default.Package_Utoken = pkg.utoken;
             Properties.Settings.Default.Save();
 
             return rm;
         }
         public static Network.ReturnMessage FinRun()
         {
-            string pkg = Properties.Settings.Default.Package;
-            if (string.IsNullOrEmpty(pkg)) return null;
+            Network.RunPackage package = new Network.RunPackage()
+            {
+                post = Properties.Settings.Default.Package,
+                utoken = Properties.Settings.Default.Package_Utoken,
+                cookie = Properties.Settings.Default.Package_Cookie,
+            };
+            if (string.IsNullOrEmpty(package.post)) return null;
 
             Properties.Settings.Default.Package = "";
             Properties.Settings.Default.Save();
 
             Network.ReturnMessage rm;
             Console.WriteLine("上传跑步结果中...");
-            rm = Network.SaveExecRun(pkg);
-            Console.WriteLine(rm.Msg + " : " + rm.Data["desc"]);
+            rm = Network.SaveExecRun(package);
+            Console.WriteLine(rm.Msg + rm.Data["desc"] != null ? " : " + rm.Data["desc"] : "");
             return rm;
         }
         public static void WriteTitle()

@@ -93,5 +93,29 @@ namespace GXTY_CSharp.Properties {
                 this["Package"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Package_Cookie {
+            get {
+                return ((string)(this["Package_Cookie"]));
+            }
+            set {
+                this["Package_Cookie"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Package_Utoken {
+            get {
+                return ((string)(this["Package_Utoken"]));
+            }
+            set {
+                this["Package_Utoken"] = value;
+            }
+        }
     }
 }

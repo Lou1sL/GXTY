@@ -50,12 +50,14 @@ namespace GXTY_CSharp
             }
 
 
+            //Properties.Settings.Default.LastGetJson = DateTime.Now - TimeSpan.FromHours(1);
+            //Properties.Settings.Default.Package = "";
+            //Properties.Settings.Default.Save();
 
-
-            if(Properties.Settings.Default.LastGetJson != null && (DateTime.Now - Properties.Settings.Default.LastGetJson).TotalMinutes < 30)
+            if (Properties.Settings.Default.LastGetJson != null && (DateTime.Now - Properties.Settings.Default.LastGetJson).TotalMinutes < 30)
             {
                 button1.Enabled = false;
-                MessageBox.Show("不是我犯贱，但是为了不被封号，请再等待 " + (int)(30 - (DateTime.Now - Properties.Settings.Default.LastGetJson).TotalMinutes) + " 分钟吧！", "警告");
+                MessageBox.Show("为了不被封号，请再等待 " + (int)(30 - (DateTime.Now - Properties.Settings.Default.LastGetJson).TotalMinutes) + " 分钟吧！", "警告");
                 Environment.Exit(0);
             }
             else if(!string.IsNullOrEmpty(Properties.Settings.Default.Package))
@@ -64,9 +66,6 @@ namespace GXTY_CSharp
                 Properties.Settings.Default.Package = null;
                 Properties.Settings.Default.Save();
             }
-
-
-
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -91,6 +90,7 @@ namespace GXTY_CSharp
                 button2.Enabled = false;
                 Properties.Settings.Default.LastGetJson = DateTime.Now;
                 MessageBox.Show("请在半小时后重新打开本程序，跑步才算做完成！注意：请不要在这段时间内用手机登陆这个账号！");
+                Close();
             }
         }
         /// <summary>

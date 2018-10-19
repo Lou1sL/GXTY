@@ -13,10 +13,10 @@ namespace GXTY_CSharp
     public static class Network
     {
 
-        private const string API_ROOT = "http://gxhttp.chinacloudapp.cn/api/";
-        private const string API_LOGIN = "reg/login";
-        private const string API_RUN = "run/runPage";
-        private const string API_SAVERUN = "run/saveRunV2";
+        private const string API_ROOT = "http://gxhttp.chinacloudapp.cn";
+        private const string API_LOGIN = "/api/reg/login";
+        private const string API_RUN = "/api/run/runPage";
+        private const string API_SAVERUN = "/api/run/saveRunV2";
 
         private static string uuid = "B5ED79A287A41BF46CA1FFFA4DAB3480";
         private static string utoken = string.Empty;
@@ -96,7 +96,7 @@ namespace GXTY_CSharp
             return rm;
         }
 
-        public static string GenerateExecRunPackage(bool readgpx)
+        public static RunPackage GenerateExecRunPackage(bool readgpx)
         {
 
             JArray tNode = (JArray)JsonConvert.DeserializeObject(tNodeArray);
@@ -110,7 +110,7 @@ namespace GXTY_CSharp
                 runJSON.AddPosition(new RunJSON.Position(runJSON.PositionList.Last().Latitude + 0.0001f, 0f));
 
 
-            runJSON.DistributeTimeSpan(TimeSpan.FromMinutes(25), DateTime.Now - TimeSpan.FromMinutes(25));
+            runJSON.DistributeTimeSpan(TimeSpan.FromMinutes(20), DateTime.Now);
 
             if (readgpx)
             {
@@ -120,18 +120,24 @@ namespace GXTY_CSharp
             string json = runJSON.ToJSON(runpgid, userid, bNodeArray, tNodeArray);
             string pkg = Json2Package.Create(json);
 
-            return pkg;
+            RunPackage package = new RunPackage();
+            package.post = pkg;
+            package.utoken = utoken;
+            package.cookie = cookie.GetCookies(new Uri(API_ROOT))[0].Value;
+            return package;
         }
-        public static ReturnMessage SaveExecRun(string pkg)
+        public static ReturnMessage SaveExecRun(RunPackage pkg)
         {
-            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg));
+            utoken = pkg.utoken;
+            cookie.SetCookies(new Uri(API_ROOT), "PHPSESSID=" + pkg.cookie);
+            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg.post));
             return rm;
         }
 
-        public static string GenerateFreeRunPackage(bool readgpx)
+        public static RunPackage GenerateFreeRunPackage(bool readgpx)
         {
             RunJSON runJSON = new RunJSON(Program.SHOUPosition);
-            runJSON.AutoAddPosition(new RunJSON.Position(0.0001f, 0f), new Random().Next(240, 290), 4f);
+            runJSON.AutoAddPosition(new RunJSON.Position(0.0001f, 0f), new Random().Next(210, 230), 5f);
             if (readgpx)
             {
                 if (!runJSON.LoadGPX("map.gpx"))
@@ -141,15 +147,21 @@ namespace GXTY_CSharp
             string json = runJSON.ToJSON(runpgid, userid);
             string pkg = Json2Package.Create(json);
 
-            return pkg;
+            RunPackage package = new RunPackage();
+            package.post = pkg;
+            package.utoken = utoken;
+            package.cookie = cookie.GetCookies(new Uri(API_ROOT))[0].Value;
+            return package;
         }
-        public static ReturnMessage SaveFreeRun(string pkg)
+        public static ReturnMessage SaveFreeRun(RunPackage pkg)
         {
-            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg));
+            utoken = pkg.utoken;
+            cookie.SetCookies(new Uri(API_ROOT), "PHPSESSID=" + pkg.cookie);
+            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg.post));
             return rm;
         }
 
-        private static CookieContainer cookie = new CookieContainer();
+        public static CookieContainer cookie { get; private set; } = new CookieContainer();
         private static T Request<T>(string url, string get, string post = "")
         {
             var request = (HttpWebRequest)WebRequest.Create(url + (get == "" ? "" : "?" + get));
@@ -157,7 +169,7 @@ namespace GXTY_CSharp
             if (post != "")
             {
                 request.Method = "POST";
-                request.Timeout = 5000;
+                request.Timeout = 10000;
                 request.AllowAutoRedirect = false;
                 request.ContentType = "application/x-www-form-urlencoded";
                 request.KeepAlive = true;
@@ -213,6 +225,13 @@ namespace GXTY_CSharp
                 Msg = jo["msg"].ToString();
                 if (jo["data"] != null) Data = (JObject)JsonConvert.DeserializeObject(jo["data"].ToString());
             }
+        }
+
+        public class RunPackage
+        {
+            public string post;
+            public string cookie;
+            public string utoken;
         }
     }
 }
