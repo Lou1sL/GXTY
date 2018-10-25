@@ -18,7 +18,7 @@ namespace GXTY_CSharp
         private const string API_RUN = "/api/run/runPage";
         private const string API_SAVERUN = "/api/run/saveRunV2";
 
-        private static string uuid = "B5ED79A287A41BF46CA1FFFA4DAB3480";
+        private static string uuid = "25EF79A227A41EF43CB1FFFA4DAB3450";
         private static string utoken = string.Empty;
         private static string userid = string.Empty;
         private static string runpgid = string.Empty;
@@ -75,6 +75,7 @@ namespace GXTY_CSharp
             }
             return rm;
         }
+
         public static ReturnMessage AskExecRun()
         {
             ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_RUN, Json2Package.Create(ExecRunJSON())));
@@ -86,16 +87,6 @@ namespace GXTY_CSharp
             }
             return rm;
         }
-        public static ReturnMessage AskFreeRun()
-        {
-            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_RUN, Json2Package.Create(FreeRunJSON())));
-            if (rm.Code == 200)
-            {
-                runpgid = rm.Data["runPageId"].ToString();
-            }
-            return rm;
-        }
-
         public static RunPackage GenerateExecRunPackage(bool readgpx)
         {
 
@@ -110,7 +101,7 @@ namespace GXTY_CSharp
                 runJSON.AddPosition(new RunJSON.Position(runJSON.PositionList.Last().Latitude + 0.0001f, 0f));
 
 
-            runJSON.DistributeTimeSpan(TimeSpan.FromMinutes(20), DateTime.Now);
+            runJSON.DistributeTimeSpan(TimeSpan.FromMinutes(30), DateTime.Now);
 
             if (readgpx)
             {
@@ -121,19 +112,22 @@ namespace GXTY_CSharp
             string pkg = Json2Package.Create(json);
 
             RunPackage package = new RunPackage();
+            package.waittill = DateTime.Now + TimeSpan.FromMinutes(30);
             package.post = pkg;
             package.utoken = utoken;
             package.cookie = cookie.GetCookies(new Uri(API_ROOT))[0].Value;
             return package;
         }
-        public static ReturnMessage SaveExecRun(RunPackage pkg)
+
+        public static ReturnMessage AskFreeRun()
         {
-            utoken = pkg.utoken;
-            cookie.SetCookies(new Uri(API_ROOT), "PHPSESSID=" + pkg.cookie);
-            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg.post));
+            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_RUN, Json2Package.Create(FreeRunJSON())));
+            if (rm.Code == 200)
+            {
+                runpgid = rm.Data["runPageId"].ToString();
+            }
             return rm;
         }
-
         public static RunPackage GenerateFreeRunPackage(bool readgpx)
         {
             RunJSON runJSON = new RunJSON(Program.SHOUPosition);
@@ -148,10 +142,19 @@ namespace GXTY_CSharp
             string pkg = Json2Package.Create(json);
 
             RunPackage package = new RunPackage();
+            package.waittill = DateTime.Now + TimeSpan.FromMinutes(40);
             package.post = pkg;
             package.utoken = utoken;
             package.cookie = cookie.GetCookies(new Uri(API_ROOT))[0].Value;
             return package;
+        }
+
+        public static ReturnMessage SaveExecRun(RunPackage pkg)
+        {
+            utoken = pkg.utoken;
+            cookie.SetCookies(new Uri(API_ROOT), "PHPSESSID=" + pkg.cookie);
+            ReturnMessage rm = new ReturnMessage(Request<JObject>(API_ROOT + API_SAVERUN, "", pkg.post));
+            return rm;
         }
         public static ReturnMessage SaveFreeRun(RunPackage pkg)
         {
@@ -182,7 +185,7 @@ namespace GXTY_CSharp
             request.Headers.Add("xxversionxx: 20180601");
             request.Headers.Add("uuid: " + uuid);
             request.Headers.Add("utoken: " + utoken);
-            request.Headers.Add("BDA9F42E0C8A294ECDF5CC72AAE6A701: 0,0,0,0,1");
+            request.Headers.Add("BDA9F42E0C8A294ECDF5CC72AAE6A702: 0,0,0,0,1");
             request.CookieContainer = cookie;
 
             if (post != "")
@@ -229,6 +232,7 @@ namespace GXTY_CSharp
 
         public class RunPackage
         {
+            public DateTime waittill;
             public string post;
             public string cookie;
             public string utoken;

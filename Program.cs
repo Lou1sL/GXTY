@@ -17,6 +17,14 @@ namespace GXTY_CSharp
             Application.Run(new RunForm());
         }
 
+        /// <summary>
+        /// 体育训练跑
+        /// 从登陆到获得跑步id的过程
+        /// </summary>
+        /// <param name="usegpx"></param>
+        /// <param name="mobile"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
         public static Network.ReturnMessage GoRun(bool usegpx, string mobile, string pass)
         {
             Network.ReturnMessage rm;
@@ -32,13 +40,22 @@ namespace GXTY_CSharp
             if (rm.Code != 200) return rm;
 
             Network.RunPackage pkg = Network.GenerateExecRunPackage(usegpx);
-            Properties.Settings.Default.Package = pkg.post;
+            Properties.Settings.Default.WaitTill = pkg.waittill;
+            Properties.Settings.Default.Post = pkg.post;
             Properties.Settings.Default.Package_Cookie = pkg.cookie;
             Properties.Settings.Default.Package_Utoken = pkg.utoken;
             Properties.Settings.Default.Save();
 
             return rm;
         }
+        /// <summary>
+        /// 自由跑
+        /// 从登陆到获得跑步id的过程
+        /// </summary>
+        /// <param name="usegpx"></param>
+        /// <param name="mobile"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
         public static Network.ReturnMessage GoFreeRun(bool usegpx, string mobile, string pass)
         {
             Network.ReturnMessage rm;
@@ -54,30 +71,36 @@ namespace GXTY_CSharp
             if (rm.Code != 200) return rm;
 
             Network.RunPackage pkg = Network.GenerateFreeRunPackage(usegpx);
-            Properties.Settings.Default.Package = pkg.post;
+            Properties.Settings.Default.WaitTill = pkg.waittill;
+            Properties.Settings.Default.Post = pkg.post;
             Properties.Settings.Default.Package_Cookie = pkg.cookie;
             Properties.Settings.Default.Package_Utoken = pkg.utoken;
             Properties.Settings.Default.Save();
 
             return rm;
         }
+        /// <summary>
+        /// 结束跑步的提交，这个提交必须延迟时间否则秒封
+        /// </summary>
+        /// <returns></returns>
         public static Network.ReturnMessage FinRun()
         {
             Network.RunPackage package = new Network.RunPackage()
             {
-                post = Properties.Settings.Default.Package,
+                waittill = Properties.Settings.Default.WaitTill,
+                post = Properties.Settings.Default.Post,
                 utoken = Properties.Settings.Default.Package_Utoken,
                 cookie = Properties.Settings.Default.Package_Cookie,
             };
             if (string.IsNullOrEmpty(package.post)) return null;
 
-            Properties.Settings.Default.Package = "";
+            Properties.Settings.Default.Post = "";
             Properties.Settings.Default.Save();
 
-            Network.ReturnMessage rm;
+            
             Console.WriteLine("上传跑步结果中...");
-            rm = Network.SaveExecRun(package);
-            Console.WriteLine(rm.Msg + rm.Data["desc"] != null ? " : " + rm.Data["desc"] : "");
+            Network.ReturnMessage rm = Network.SaveExecRun(package);
+            Console.WriteLine(rm.Msg +rm.Data!=null ? rm.Data["desc"] != null ? " : " + rm.Data["desc"] : "":"");
             return rm;
         }
         public static void WriteTitle()

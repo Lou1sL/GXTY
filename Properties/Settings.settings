@@ -14,10 +14,10 @@
     <Setting Name="Pass" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="LastGetJson" Type="System.DateTime" Scope="User">
+    <Setting Name="WaitTill" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Package" Type="System.String" Scope="User">
+    <Setting Name="Post" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="Package_Cookie" Type="System.String" Scope="User">

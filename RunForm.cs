@@ -27,6 +27,8 @@ namespace GXTY_CSharp
                 MessageBox.Show(this,
                     "v1.11\n\n" +
 
+                    "免责声明：使用该软件导致的封号本人不负责任！\n\n"+
+
                     "警告：使用自己绘制的路径图案未来可能导致封号！\n" +
 
                     "修复绘制路径时间不合理的问题\n" +
@@ -34,9 +36,8 @@ namespace GXTY_CSharp
                     "自动生成路线低级伪造\n" +
                     "安全原因暂时停用自由跑功能\n" +
                     "修正上海海洋大学的坐标点位置\n\n" +
-
-                    "本程序不以盈利为目的\n" +
-                    "如果你是花钱购买的本程序，说明你被坑了，请节哀\n\n" +
+                    
+                    "PS:如果你是花钱购买的本程序，说明你被坑了，请节哀\n\n" +
 
                     "制作：留白(RyuBAI)\n"
                     , "更新日志");
@@ -50,21 +51,22 @@ namespace GXTY_CSharp
             }
 
 
-            //Properties.Settings.Default.LastGetJson = DateTime.Now - TimeSpan.FromHours(1);
+            Properties.Settings.Default.WaitTill = DateTime.Now - TimeSpan.FromMinutes(1);
             //Properties.Settings.Default.Package = "";
             //Properties.Settings.Default.Save();
 
-            if (Properties.Settings.Default.LastGetJson != null && (DateTime.Now - Properties.Settings.Default.LastGetJson).TotalMinutes < 30)
+            if (Properties.Settings.Default.WaitTill != null && (Properties.Settings.Default.WaitTill - DateTime.Now).TotalMinutes > 0)
             {
                 button1.Enabled = false;
-                MessageBox.Show("为了不被封号，请再等待 " + (int)(30 - (DateTime.Now - Properties.Settings.Default.LastGetJson).TotalMinutes) + " 分钟吧！", "警告");
+                MessageBox.Show("为了不被封号，请再等待 " + (int)((Properties.Settings.Default.WaitTill - DateTime.Now).TotalMinutes + 1) + " 分钟吧！", "警告");
                 Environment.Exit(0);
             }
-            else if(!string.IsNullOrEmpty(Properties.Settings.Default.Package))
+            else if (!string.IsNullOrEmpty(Properties.Settings.Default.Post))
             {
-                Program.FinRun();
-                Properties.Settings.Default.Package = null;
+                Network.ReturnMessage rm = Program.FinRun();
+                Properties.Settings.Default.Post = null;
                 Properties.Settings.Default.Save();
+                MessageBox.Show(rm.Msg + rm.Data != null ? rm.Data["desc"] != null ? " : " + rm.Data["desc"] : "" : "", "提示");
             }
         }
 
@@ -88,7 +90,6 @@ namespace GXTY_CSharp
             {
                 button1.Enabled = false;
                 button2.Enabled = false;
-                Properties.Settings.Default.LastGetJson = DateTime.Now;
                 MessageBox.Show("请在半小时后重新打开本程序，跑步才算做完成！注意：请不要在这段时间内用手机登陆这个账号！");
                 Close();
             }

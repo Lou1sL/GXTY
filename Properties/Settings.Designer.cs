@@ -12,7 +12,7 @@ namespace GXTY_CSharp.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.3.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -73,24 +73,24 @@ namespace GXTY_CSharp.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::System.DateTime LastGetJson {
+        public global::System.DateTime WaitTill {
             get {
-                return ((global::System.DateTime)(this["LastGetJson"]));
+                return ((global::System.DateTime)(this["WaitTill"]));
             }
             set {
-                this["LastGetJson"] = value;
+                this["WaitTill"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Package {
+        public string Post {
             get {
-                return ((string)(this["Package"]));
+                return ((string)(this["Post"]));
             }
             set {
-                this["Package"] = value;
+                this["Post"] = value;
             }
         }
         
