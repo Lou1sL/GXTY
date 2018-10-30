@@ -232,7 +232,7 @@ namespace GXTY_CSharp
             public override string ToString()
             {
                 string str = Msg;// + (rm.Data != null ? (rm.Data["desc"] != null ? (" : " + rm.Data["desc"] : "")) : "")
-                if (Data != null && Data["desc"] != null) str += Data["desc"];
+                if (Data != null && Data["desc"] != null) str += " : "+Data["desc"];
 
                 return str;
             }

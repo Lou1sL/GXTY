@@ -51,7 +51,7 @@ namespace GXTY_CSharp
             }
 
 
-            Properties.Settings.Default.WaitTill = DateTime.Now - TimeSpan.FromMinutes(1);
+            //Properties.Settings.Default.WaitTill = DateTime.Now - TimeSpan.FromMinutes(1);
             //Properties.Settings.Default.Package = "";
             //Properties.Settings.Default.Save();
 
@@ -66,7 +66,7 @@ namespace GXTY_CSharp
                 Network.ReturnMessage rm = Program.FinRun();
                 Properties.Settings.Default.Post = null;
                 Properties.Settings.Default.Save();
-                MessageBox.Show(rm.Msg + rm.Data != null ? rm.Data["desc"] != null ? " : " + rm.Data["desc"] : "" : "", "提示");
+                MessageBox.Show(rm.ToString(), "提示");
             }
         }
 
