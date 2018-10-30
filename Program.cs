@@ -100,7 +100,7 @@ namespace GXTY_CSharp
             
             Console.WriteLine("上传跑步结果中...");
             Network.ReturnMessage rm = Network.SaveExecRun(package);
-            Console.WriteLine(rm.Msg +rm.Data!=null ? rm.Data["desc"] != null ? " : " + rm.Data["desc"] : "":"");
+            Console.WriteLine(rm);
             return rm;
         }
         public static void WriteTitle()

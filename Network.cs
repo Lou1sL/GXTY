@@ -224,9 +224,17 @@ namespace GXTY_CSharp
 
             public ReturnMessage(JObject jo)
             {
-                Code = Convert.ToInt32(jo["code"].ToString());
-                Msg = jo["msg"].ToString();
+                if (jo["code"] != null) Code = Convert.ToInt32(jo["code"].ToString());
+                if (jo["msg"] != null) Msg = jo["msg"].ToString();
                 if (jo["data"] != null) Data = (JObject)JsonConvert.DeserializeObject(jo["data"].ToString());
+            }
+
+            public override string ToString()
+            {
+                string str = Msg;// + (rm.Data != null ? (rm.Data["desc"] != null ? (" : " + rm.Data["desc"] : "")) : "")
+                if (Data != null && Data["desc"] != null) str += Data["desc"];
+
+                return str;
             }
         }
 
